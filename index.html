@@ -75,6 +75,9 @@
     .tower.artillery { background-color: #2d572c; border: 2px solid #4a7b49; }
     .tower.aa { background-color: #1a3e5c; border: 2px solid #3a6da3; }
     .tower.sniper { background-color: #5c2b1a; border: 2px solid #8a4f3b; }
+    .tower.engineer { background-color: #8b4513; border: 2px solid #d2691e; }
+    .tower.radar { background-color: #4b0082; border: 2px solid #9370db; }
+    .tower.command { background-color: #556b2f; border: 2px solid #9acd32; }
     .tower-range { position: absolute; border-radius: 50%; background-color: rgba(255, 240, 130, 0.15); border: 1px dashed rgba(255, 204, 0, 0.3); pointer-events: none; z-index: 5; display: none; }
     .bullet { position: absolute; width: 6px; height: 6px; border-radius: 50%; z-index: 8; }
     .bullet.mg { background-color: #ffcc00; }
@@ -118,14 +121,34 @@
     .close-panel { position: absolute; top: 5px; right: 8px; cursor: pointer; font-weight: bold; font-size: 14px; }
     .ammo-bar { position: absolute; bottom: -8px; left: 0; width: 30px; height: 3px; background-color: #333; border-radius: 1px; overflow: hidden; }
     .ammo-fill { height: 100%; background-color: #ffaa00; width: 100%; }
+    
+    /* Special structures and effects */
+    .wall { position: absolute; width: 20px; height: 20px; background-color: #8b4513; border: 1px solid #654321; z-index: 8; }
+    .mine { position: absolute; width: 15px; height: 15px; background-color: #696969; border: 1px solid #2f4f4f; border-radius: 50%; z-index: 8; cursor: pointer; }
+    .mine:hover { background-color: #ff4500; }
+    .supply-convoy { position: absolute; width: 25px; height: 25px; background-color: #4CAF50; border: 2px solid #2E7D32; z-index: 9; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+    
+    /* Radar detection effects */
+    .radar-sweep { position: absolute; border-radius: 50%; border: 2px solid rgba(75, 0, 130, 0.6); animation: radarSweep 3s infinite; pointer-events: none; z-index: 6; }
+    @keyframes radarSweep { 0% { transform: scale(0.1); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+    
+    /* Command post aura */
+    .command-aura { position: absolute; border-radius: 50%; background-color: rgba(154, 205, 50, 0.1); border: 1px dashed rgba(154, 205, 50, 0.3); pointer-events: none; z-index: 5; }
+    
+    /* Special action buttons */
+    .action-buttons { position: absolute; display: none; z-index: 25; }
+    .action-btn { padding: 4px 8px; margin: 2px; background-color: #444; color: white; border: 1px solid #666; border-radius: 3px; font-size: 12px; cursor: pointer; }
+    .action-btn:hover { background-color: #555; }
+    .action-btn.disabled { opacity: 0.5; cursor: not-allowed; }
   </style>
 </head>
 <body>
   <div id="instructions">
     <h2 style="margin-top: 0;">WWII Tower Defense - Procedural Maps</h2>
     <p>Select a tower, place it on strategic terrain, and defend against waves of enemies!</p>
-    <p><strong>Towers:</strong> Machine Gun (👨‍🦯) - good against infantry, Artillery (💣) - area damage, Anti-Air (⚡) - counters aircraft, Sniper (🔭) - high damage</p>
-    <p><strong>Strategic Terrain:</strong> Hills (🏔️) give +25% range, Forests (🌲) provide concealment, Resource nodes (💰) generate income when towers are nearby</p>
+    <p><strong>Combat Towers:</strong> Machine Gun (👨‍🦯) - infantry, Artillery (💣) - area damage, Anti-Air (⚡) - aircraft, Sniper (🔭) - high damage</p>
+    <p><strong>Support Towers:</strong> Engineer (🔧) - builds walls/mines, Radar (📡) - boosts AA range/detection, Command (🏛️) - buffs nearby towers (+30% damage)</p>
+    <p><strong>Strategic Elements:</strong> Hills (🏔️) +25% range, Forests (🌲) concealment, Resource nodes (💰) passive income, Supply convoys (🚛) bonus resources</p>
     <div class="difficulty-selection">
       <button class="difficulty-btn selected" data-difficulty="normal">Normal</button>
       <button class="difficulty-btn" data-difficulty="hard">Hard</button>
@@ -176,6 +199,18 @@
         <div class="tower-icon">🔭</div>
         <div class="tower-cost">$60</div>
       </div>
+      <div class="tower-option" data-type="engineer" onclick="selectTower('engineer')">
+        <div class="tower-icon">🔧</div>
+        <div class="tower-cost">$45</div>
+      </div>
+      <div class="tower-option" data-type="radar" onclick="selectTower('radar')">
+        <div class="tower-icon">📡</div>
+        <div class="tower-cost">$35</div>
+      </div>
+      <div class="tower-option" data-type="command" onclick="selectTower('command')">
+        <div class="tower-icon">🏛️</div>
+        <div class="tower-cost">$80</div>
+      </div>
     </div>
     <button id="start-button" onclick="startWave()">Start Wave 1</button>
   </div>
@@ -193,7 +228,11 @@
       resources: 150, lives: 20, currentWave: 0, maxWaves: 12, waveInProgress: false,
       gameOver: false, victory: false, score: 0, selectedTowerType: null, selectedTower: null,
       towers: [], enemies: [], bullets: [], animationFrameId: null, difficulty: 'normal',
-      lastFrameTime: 0, terrainElements: [], frameCounter: 0, enemySpeedMultiplier: 0.025
+      lastFrameTime: 0, terrainElements: [], frameCounter: 0, enemySpeedMultiplier: 0.025,
+      walls: [], mines: [], radarCoverage: false, nextWavePreview: null, supplyConvoys: [],
+      lastConvoyTime: 0, performanceMetrics: {
+        enemiesKilled: 0, wavesCompleted: 0, accuracy: 100, efficiency: 100
+      }
     };
 
     // Map generation system
@@ -397,7 +436,10 @@
       mg: { name: "Machine Gun", cost: 25, damage: 1, range: 120, fireRate: 500, targets: ["infantry", "tank", "heavytank"], icon: "👨‍🦯", ammo: 20, maxAmmo: 20, reloadTime: 2000 },
       artillery: { name: "Artillery", cost: 50, damage: 3, range: 180, fireRate: 2000, targets: ["infantry", "tank", "heavytank"], icon: "💣", splash: 60, ammo: 3, maxAmmo: 3, reloadTime: 5000 },
       aa: { name: "Anti-Air", cost: 40, damage: 2, range: 150, fireRate: 800, targets: ["aircraft"], icon: "⚡", ammo: 15, maxAmmo: 15, reloadTime: 3000 },
-      sniper: { name: "Sniper", cost: 60, damage: 6, range: 250, fireRate: 3000, targets: ["infantry", "tank", "heavytank"], icon: "🔭", ammo: 5, maxAmmo: 5, reloadTime: 4000 }
+      sniper: { name: "Sniper", cost: 60, damage: 6, range: 250, fireRate: 3000, targets: ["infantry", "tank", "heavytank"], icon: "🔭", ammo: 5, maxAmmo: 5, reloadTime: 4000 },
+      engineer: { name: "Engineer", cost: 45, damage: 0, range: 100, fireRate: 5000, targets: [], icon: "🔧", ammo: 3, maxAmmo: 3, reloadTime: 8000, special: "construction" },
+      radar: { name: "Radar", cost: 35, damage: 0, range: 200, fireRate: 0, targets: [], icon: "📡", ammo: 0, maxAmmo: 0, reloadTime: 0, special: "detection" },
+      command: { name: "Command Post", cost: 80, damage: 0, range: 150, fireRate: 0, targets: [], icon: "🏛️", ammo: 0, maxAmmo: 0, reloadTime: 0, special: "support" }
     };
 
     // Enemy definitions
@@ -568,6 +610,10 @@
           checkWaveStatus();
           checkTowerReloading();
           updateResourceNodes();
+          checkMineExplosions();
+          updateCommandBonuses();
+          updateSupplyConvoys(deltaTime);
+          spawnSupplyConvoy();
         }
         
         gameState.animationFrameId = requestAnimationFrame(gameLoop);
@@ -623,6 +669,9 @@
       const currentTime = Date.now();
       
       gameState.towers.forEach(tower => {
+        // Skip special towers that don't fire
+        if (tower.special === 'detection' || tower.special === 'support') return;
+        
         // Skip if reloading or no ammo
         if (tower.reloading || tower.ammo <= 0) return;
         if (currentTime - tower.lastFired < tower.fireRate) return;
@@ -720,6 +769,29 @@
       setTimeout(() => popup.remove(), 1000);
     }
 
+    // Check for mine explosions
+    function checkMineExplosions() {
+      gameState.mines.forEach((mine, index) => {
+        if (mine.triggered) return;
+        
+        // Check if any enemy is near the mine
+        for (let enemy of gameState.enemies) {
+          const dx = enemy.x - mine.x;
+          const dy = enemy.y - mine.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 20) {
+            // Trigger mine explosion
+            mine.triggered = true;
+            createExplosion(mine.x, mine.y, mine.damage);
+            mine.element.remove();
+            gameState.mines.splice(index, 1);
+            break;
+          }
+        }
+      });
+    }
+
     // Optimized bullet movement and collision detection
     function updateBullets(deltaTime) {
       const bulletsToRemove = [];
@@ -777,9 +849,162 @@
       });
     }
 
+    // Special tower implementations
+    function addEngineerActions(tower) {
+      const actionPanel = document.createElement('div');
+      actionPanel.className = 'action-buttons';
+      actionPanel.innerHTML = `
+        <div class="action-btn" onclick="buildWall(${tower.x}, ${tower.y})">Build Wall ($15)</div>
+        <div class="action-btn" onclick="placeMine(${tower.x}, ${tower.y})">Place Mine ($10)</div>
+      `;
+      tower.element.appendChild(actionPanel);
+      
+      tower.element.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.action-buttons').forEach(panel => panel.style.display = 'none');
+        actionPanel.style.display = actionPanel.style.display === 'block' ? 'none' : 'block';
+      });
+    }
+
+    function activateRadarTower(tower) {
+      // Create radar sweep effect
+      const radarSweep = document.createElement('div');
+      radarSweep.className = 'radar-sweep';
+      radarSweep.style.width = `${tower.range * 2}px`;
+      radarSweep.style.height = `${tower.range * 2}px`;
+      radarSweep.style.left = `-${tower.range - 20}px`;
+      radarSweep.style.top = `-${tower.range - 20}px`;
+      tower.element.appendChild(radarSweep);
+      
+      // Enable radar coverage globally
+      gameState.radarCoverage = true;
+      updateRadarEffects();
+    }
+
+    function activateCommandPost(tower) {
+      // Create command aura
+      const commandAura = document.createElement('div');
+      commandAura.className = 'command-aura';
+      commandAura.style.width = `${tower.range * 2}px`;
+      commandAura.style.height = `${tower.range * 2}px`;
+      commandAura.style.left = `-${tower.range - 20}px`;
+      commandAura.style.top = `-${tower.range - 20}px`;
+      tower.element.appendChild(commandAura);
+      
+      // Apply bonuses to nearby towers
+      updateCommandBonuses();
+    }
+
+    function buildWall(engineerX, engineerY) {
+      if (gameState.resources < 15) return;
+      
+      // Find nearby position for wall
+      const wallX = engineerX + (Math.random() - 0.5) * 80;
+      const wallY = engineerY + (Math.random() - 0.5) * 80;
+      
+      if (isOnPath(wallX, wallY) || isTowerConflict(wallX, wallY)) return;
+      
+      gameState.resources -= 15;
+      updateInfoPanel();
+      
+      const wall = document.createElement('div');
+      wall.className = 'wall';
+      wall.style.left = `${wallX - 10}px`;
+      wall.style.top = `${wallY - 10}px`;
+      gameBoard.appendChild(wall);
+      
+      gameState.walls.push({
+        x: wallX, y: wallY, element: wall, health: 5, maxHealth: 5
+      });
+      
+      // Walls block enemy movement temporarily
+      setTimeout(() => {
+        wall.remove();
+        const index = gameState.walls.findIndex(w => w.element === wall);
+        if (index !== -1) gameState.walls.splice(index, 1);
+      }, 30000); // 30 seconds
+    }
+
+    function placeMine(engineerX, engineerY) {
+      if (gameState.resources < 10) return;
+      
+      const mineX = engineerX + (Math.random() - 0.5) * 100;
+      const mineY = engineerY + (Math.random() - 0.5) * 100;
+      
+      if (isOnPath(mineX, mineY)) {
+        gameState.resources -= 10;
+        updateInfoPanel();
+        
+        const mine = document.createElement('div');
+        mine.className = 'mine';
+        mine.style.left = `${mineX - 7}px`;
+        mine.style.top = `${mineY - 7}px`;
+        mine.textContent = '💥';
+        gameBoard.appendChild(mine);
+        
+        gameState.mines.push({
+          x: mineX, y: mineY, element: mine, damage: 8, triggered: false
+        });
+      }
+    }
+
+    function updateRadarEffects() {
+      if (gameState.radarCoverage) {
+        // Extend AA tower range by 50%
+        gameState.towers.forEach(tower => {
+          if (tower.type === 'aa' && !tower.radarBoosted) {
+            tower.range *= 1.5;
+            tower.radarBoosted = true;
+            // Update range indicator
+            const rangeIndicator = tower.element.querySelector('.tower-range');
+            if (rangeIndicator) {
+              rangeIndicator.style.width = `${tower.range * 2}px`;
+              rangeIndicator.style.height = `${tower.range * 2}px`;
+              rangeIndicator.style.left = `-${tower.range - 20}px`;
+              rangeIndicator.style.top = `-${tower.range - 20}px`;
+            }
+          }
+        });
+      }
+    }
+
+    function updateCommandBonuses() {
+      const commandPosts = gameState.towers.filter(t => t.type === 'command');
+      
+      gameState.towers.forEach(tower => {
+        if (tower.type !== 'command') {
+          let hasCommandBonus = false;
+          
+          commandPosts.forEach(commandPost => {
+            const dx = tower.x - commandPost.x;
+            const dy = tower.y - commandPost.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance <= commandPost.range) {
+              hasCommandBonus = true;
+            }
+          });
+          
+          // Apply/remove command bonus
+          if (hasCommandBonus && !tower.commandBoosted) {
+            tower.damage *= 1.3; // 30% damage boost
+            tower.fireRate *= 0.8; // 20% faster firing
+            tower.commandBoosted = true;
+            tower.element.style.boxShadow = '0 0 8px 2px rgba(154, 205, 50, 0.8)';
+          } else if (!hasCommandBonus && tower.commandBoosted) {
+            tower.damage /= 1.3;
+            tower.fireRate /= 0.8;
+            tower.commandBoosted = false;
+            tower.element.style.boxShadow = '';
+          }
+        }
+      });
+    }
+
     // Helper functions (tower selection, enemy creation, etc.)
     function selectTower(type) {
       closeUpgradePanel();
+      document.querySelectorAll('.action-buttons').forEach(panel => panel.style.display = 'none');
       document.querySelectorAll('.tower-option').forEach(o => o.classList.remove('selected'));
       document.querySelector(`.tower-option[data-type="${type}"]`).classList.add('selected');
       gameState.selectedTowerType = type;
@@ -886,7 +1111,8 @@
         reloading: false,
         ammoBar: ammoFill,
         level: { damage: 1, range: 1, rate: 1 },
-        terrainBonus: terrainBonus // Store bonus type
+        terrainBonus: terrainBonus, // Store bonus type
+        special: towerTypes[type].special || null
       };
       
       if (type === 'artillery') {
@@ -896,6 +1122,15 @@
       // Add concealment bonus (AA towers can't target this tower if in forest)
       if (terrainBonus === 'concealment') {
         towerObj.concealed = true;
+      }
+      
+      // Initialize special tower features
+      if (type === 'engineer') {
+        addEngineerActions(towerObj);
+      } else if (type === 'radar') {
+        activateRadarTower(towerObj);
+      } else if (type === 'command') {
+        activateCommandPost(towerObj);
       }
       
       // Add events
@@ -1020,11 +1255,12 @@
     }
 
     function spawnEnemies(waveDefinition) {
+      const scaledDefinition = scaleWaveForPerformance(waveDefinition);
       const enemiesToSpawn = [];
       const spawnDelay = difficultySettings[gameState.difficulty].waveSpawnDelay;
       
       // Add normal enemies
-      Object.entries(waveDefinition).forEach(([type, count]) => {
+      Object.entries(scaledDefinition).forEach(([type, count]) => {
         if (type !== 'elites') {
           for (let i = 0; i < count; i++) {
             enemiesToSpawn.push(type);
@@ -1033,8 +1269,8 @@
       });
       
       // Add elite enemies
-      if (waveDefinition.elites) {
-        waveDefinition.elites.forEach(eliteType => {
+      if (scaledDefinition.elites) {
+        scaledDefinition.elites.forEach(eliteType => {
           const eliteCount = Math.floor(Math.random() * 2) + 2;
           for (let i = 0; i < eliteCount; i++) {
             enemiesToSpawn.push(`elite_${eliteType}`);
@@ -1055,6 +1291,174 @@
             }
           }
         }, index * spawnDelay);
+      });
+    }
+
+    // Dynamic wave scaling based on player performance
+    function scaleWaveForPerformance(baseWave) {
+      const metrics = gameState.performanceMetrics;
+      const scaledWave = { ...baseWave };
+      
+      // Calculate performance score (0.0 to 2.0)
+      const killRatio = Math.min(metrics.enemiesKilled / Math.max(gameState.currentWave * 10, 1), 1.5);
+      const waveSuccessRate = metrics.wavesCompleted / Math.max(gameState.currentWave, 1);
+      const performanceScore = (killRatio + waveSuccessRate + metrics.efficiency / 100) / 3;
+      
+      // If player is doing well, increase difficulty
+      if (performanceScore > 1.2) {
+        Object.keys(scaledWave).forEach(enemyType => {
+          if (enemyType !== 'elites') {
+            scaledWave[enemyType] = Math.floor(scaledWave[enemyType] * 1.3);
+          }
+        });
+        // Add more elite types for high performers
+        if (!scaledWave.elites) scaledWave.elites = [];
+        const availableElites = ['tank', 'aircraft', 'heavytank'];
+        if (scaledWave.elites.length < 2 && gameState.currentWave > 5) {
+          scaledWave.elites.push(availableElites[Math.floor(Math.random() * availableElites.length)]);
+        }
+      }
+      // If player is struggling, reduce difficulty
+      else if (performanceScore < 0.7) {
+        Object.keys(scaledWave).forEach(enemyType => {
+          if (enemyType !== 'elites') {
+            scaledWave[enemyType] = Math.max(Math.floor(scaledWave[enemyType] * 0.8), 1);
+          }
+        });
+        // Remove some elite enemies for struggling players
+        if (scaledWave.elites && scaledWave.elites.length > 0) {
+          scaledWave.elites.pop();
+        }
+      }
+      
+      return scaledWave;
+    }
+
+    // Update performance metrics
+    function updatePerformanceMetrics() {
+      // Calculate accuracy based on shots fired vs enemies killed
+      const totalShots = gameState.bullets.length + gameState.performanceMetrics.enemiesKilled * 2;
+      gameState.performanceMetrics.accuracy = Math.max(
+        (gameState.performanceMetrics.enemiesKilled / Math.max(totalShots, 1)) * 100, 10
+      );
+      
+      // Calculate efficiency based on resources spent vs enemies killed
+      const resourcesSpent = 150 - gameState.resources + gameState.performanceMetrics.enemiesKilled * 5;
+      gameState.performanceMetrics.efficiency = Math.min(
+        (gameState.performanceMetrics.enemiesKilled * 10 / Math.max(resourcesSpent, 1)) * 100, 200
+      );
+    }
+
+    // Supply convoy system
+    function spawnSupplyConvoy() {
+      const currentTime = Date.now();
+      
+      // Spawn convoy every 45-60 seconds
+      if (currentTime - gameState.lastConvoyTime > 45000 + Math.random() * 15000) {
+        gameState.lastConvoyTime = currentTime;
+        
+        const convoy = document.createElement('div');
+        convoy.className = 'supply-convoy';
+        convoy.textContent = '🚛';
+        
+        // Start from a random edge
+        const startSide = Math.floor(Math.random() * 4);
+        let startX, startY, targetX, targetY;
+        
+        switch (startSide) {
+          case 0: // Top
+            startX = Math.random() * 800;
+            startY = -30;
+            targetX = Math.random() * 800;
+            targetY = 530;
+            break;
+          case 1: // Right
+            startX = 830;
+            startY = Math.random() * 500;
+            targetX = -30;
+            targetY = Math.random() * 500;
+            break;
+          case 2: // Bottom
+            startX = Math.random() * 800;
+            startY = 530;
+            targetX = Math.random() * 800;
+            targetY = -30;
+            break;
+          case 3: // Left
+            startX = -30;
+            startY = Math.random() * 500;
+            targetX = 830;
+            targetY = Math.random() * 500;
+            break;
+        }
+        
+        convoy.style.left = `${startX}px`;
+        convoy.style.top = `${startY}px`;
+        gameBoard.appendChild(convoy);
+        
+        const convoyObj = {
+          x: startX, y: startY, targetX, targetY, element: convoy,
+          speed: 2, resources: 25 + Math.floor(Math.random() * 25), // 25-50 resources
+          health: 15, maxHealth: 15, collected: false
+        };
+        
+        gameState.supplyConvoys.push(convoyObj);
+      }
+    }
+
+    function updateSupplyConvoys(deltaTime) {
+      const convoysToRemove = [];
+      
+      gameState.supplyConvoys.forEach((convoy, index) => {
+        if (convoy.collected) return;
+        
+        // Move convoy towards target
+        const dx = convoy.targetX - convoy.x;
+        const dy = convoy.targetY - convoy.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance > 5) {
+          convoy.x += (dx / distance) * convoy.speed * (deltaTime / 16);
+          convoy.y += (dy / distance) * convoy.speed * (deltaTime / 16);
+          
+          convoy.element.style.left = `${convoy.x}px`;
+          convoy.element.style.top = `${convoy.y}px`;
+        } else {
+          // Convoy reached target, remove it
+          convoysToRemove.push(index);
+        }
+        
+        // Check if player clicks on convoy to collect resources
+        convoy.element.addEventListener('click', () => {
+          if (!convoy.collected) {
+            convoy.collected = true;
+            gameState.resources += convoy.resources;
+            updateInfoPanel();
+            showResourceGain(convoy.x, convoy.y, convoy.resources);
+            convoysToRemove.push(index);
+          }
+        });
+        
+        // Convoy can be damaged by enemies
+        gameState.enemies.forEach(enemy => {
+          const dx = enemy.x - convoy.x;
+          const dy = enemy.y - convoy.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 25) {
+            convoy.health -= enemy.damage;
+            if (convoy.health <= 0 && !convoy.collected) {
+              convoysToRemove.push(index);
+            }
+          }
+        });
+      });
+      
+      // Remove convoys that have been collected or destroyed
+      convoysToRemove.reverse().forEach(index => {
+        const convoy = gameState.supplyConvoys[index];
+        convoy.element.remove();
+        gameState.supplyConvoys.splice(index, 1);
       });
     }
 
@@ -1161,7 +1565,9 @@
       if (enemy.health <= 0) {
         gameState.resources += enemy.worth;
         gameState.score += enemy.scoreValue;
+        gameState.performanceMetrics.enemiesKilled++;
         updateInfoPanel();
+        updatePerformanceMetrics();
         removeEnemy(enemy);
       }
     }
@@ -1178,6 +1584,8 @@
       if (gameState.waveInProgress && gameState.enemies.length === 0) {
         gameState.waveInProgress = false;
         gameState.currentWave++;
+        gameState.performanceMetrics.wavesCompleted++;
+        updatePerformanceMetrics();
         
         if (gameState.currentWave >= gameState.maxWaves) {
           endGame(true);
@@ -1218,6 +1626,9 @@
       gameState.towers.forEach(tower => tower.element.remove());
       gameState.bullets.forEach(bullet => bullet.element.remove());
       gameState.terrainElements.forEach(element => element.remove());
+      gameState.walls.forEach(wall => wall.element.remove());
+      gameState.mines.forEach(mine => mine.element.remove());
+      gameState.supplyConvoys.forEach(convoy => convoy.element.remove());
       gameState.terrainElements = [];
       
       // Reset game state
@@ -1225,7 +1636,9 @@
         resources: 150, lives: 20, currentWave: 0, waveInProgress: false,
         gameOver: false, victory: false, selectedTowerType: null, selectedTower: null,
         towers: [], enemies: [], bullets: [], animationFrameId: null,
-        score: 0, lastFrameTime: 0, frameCounter: 0, enemySpeedMultiplier: 0.4
+        score: 0, lastFrameTime: 0, frameCounter: 0, enemySpeedMultiplier: 0.4,
+        walls: [], mines: [], radarCoverage: false, nextWavePreview: null, supplyConvoys: [],
+        lastConvoyTime: 0, performanceMetrics: { enemiesKilled: 0, wavesCompleted: 0, accuracy: 100, efficiency: 100 }
       });
       
       // Reset UI
