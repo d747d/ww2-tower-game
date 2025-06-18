@@ -14,6 +14,50 @@
     .tree { width: 30px; height: 30px; font-size: 24px; text-align: center; }
     .rock { width: 20px; height: 20px; background-color: #777; border-radius: 5px; opacity: 0.8; }
     
+    /* Strategic terrain types */
+    .terrain.hill { 
+      background: radial-gradient(circle, rgba(139, 125, 57, 0.3) 0%, rgba(139, 125, 57, 0.1) 70%, transparent 100%);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .terrain.forest { 
+      background: radial-gradient(circle, rgba(58, 73, 41, 0.4) 0%, rgba(58, 73, 41, 0.1) 70%, transparent 100%);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .terrain.resource { 
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.1) 70%, transparent 100%);
+      border-radius: 50%;
+      cursor: pointer;
+      animation: resourcePulse 2s infinite;
+    }
+    @keyframes resourcePulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0.1); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+    }
+    .terrain.decoration {
+      cursor: default;
+    }
+    
+    /* Terrain bonus indicators */
+    .terrain-bonus {
+      position: absolute;
+      bottom: -5px;
+      right: -5px;
+      background-color: rgba(255, 204, 0, 0.8);
+      color: #000;
+      font-size: 10px;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-weight: bold;
+      display: none;
+    }
+    
+    .terrain:hover .terrain-bonus {
+      display: block;
+    }
+    
     /* Improved path styling */
     .path { position: absolute; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><rect width="60" height="60" fill="%238B4513" opacity="0.6" /><line x1="0" y1="20" x2="60" y2="20" stroke="%23a58d68" stroke-width="2" stroke-dasharray="5,5" /><line x1="0" y1="40" x2="60" y2="40" stroke="%23a58d68" stroke-width="2" stroke-dasharray="5,5" /></svg>'); pointer-events: none; }
     
@@ -78,14 +122,15 @@
 </head>
 <body>
   <div id="instructions">
-    <h2 style="margin-top: 0;">WWII Tower Defense</h2>
-    <p>Select a tower, place it on the map (avoiding the path), and defend against waves of enemies!</p>
-    <p><strong>Towers:</strong></p>
-    <p>Machine Gun (👨‍🦯) - good against infantry, Artillery (💣) - area damage, Anti-Air (⚡) - counters aircraft, Sniper (🔭) - high damage</p>
+    <h2 style="margin-top: 0;">WWII Tower Defense - Procedural Maps</h2>
+    <p>Select a tower, place it on strategic terrain, and defend against waves of enemies!</p>
+    <p><strong>Towers:</strong> Machine Gun (👨‍🦯) - good against infantry, Artillery (💣) - area damage, Anti-Air (⚡) - counters aircraft, Sniper (🔭) - high damage</p>
+    <p><strong>Strategic Terrain:</strong> Hills (🏔️) give +25% range, Forests (🌲) provide concealment, Resource nodes (💰) generate income when towers are nearby</p>
     <div class="difficulty-selection">
       <button class="difficulty-btn selected" data-difficulty="normal">Normal</button>
       <button class="difficulty-btn" data-difficulty="hard">Hard</button>
       <button class="difficulty-btn" data-difficulty="veteran">Veteran</button>
+      <button id="new-map-btn" style="padding: 8px 15px; background-color: #ff6600; border: none; color: white; border-radius: 5px; cursor: pointer; margin-left: 10px;" onclick="generateNewMap()">New Map</button>
     </div>
   </div>
   
@@ -151,35 +196,201 @@
       lastFrameTime: 0, terrainElements: [], frameCounter: 0, enemySpeedMultiplier: 0.025
     };
 
-    // Define curved path coordinates (more realistic path)
-    const pathSegments = [
-      { type: 'curved', points: [{ x: 150, y: -30 }, { x: 180, y: 100 }, { x: 230, y: 250 }, { x: 230, y: 330 }] },
-      { type: 'curved', points: [{ x: 230, y: 330 }, { x: 270, y: 350 }, { x: 320, y: 350 }, { x: 400, y: 330 }] },
-      { type: 'curved', points: [{ x: 400, y: 330 }, { x: 430, y: 300 }, { x: 430, y: 250 }, { x: 400, y: 180 }] },
-      { type: 'curved', points: [{ x: 400, y: 180 }, { x: 450, y: 170 }, { x: 500, y: 180 }, { x: 600, y: 180 }] }
-    ];
+    // Map generation system
+    class MapGenerator {
+      constructor(width = 800, height = 500) {
+        this.width = width;
+        this.height = height;
+        this.gridSize = 25;
+        this.seed = Math.random();
+      }
+
+      // Simple seeded random number generator
+      seededRandom(seed) {
+        const x = Math.sin(seed) * 10000;
+        return x - Math.floor(x);
+      }
+
+      // Generate procedural path through the map
+      generatePath(seed = this.seed) {
+        const pathSegments = [];
+        const startX = 50 + this.seededRandom(seed) * 100;
+        const endX = this.width - 50;
+        const startY = this.seededRandom(seed + 1) * this.height;
+        
+        // Create strategic waypoints with some randomization
+        const waypoints = [
+          { x: startX, y: startY },
+          { x: startX + 150 + this.seededRandom(seed + 2) * 100, y: startY + (this.seededRandom(seed + 3) - 0.5) * 200 },
+          { x: this.width * 0.5 + (this.seededRandom(seed + 4) - 0.5) * 150, y: this.height * 0.3 + this.seededRandom(seed + 5) * 200 },
+          { x: this.width * 0.7 + (this.seededRandom(seed + 6) - 0.5) * 100, y: this.height * 0.6 + (this.seededRandom(seed + 7) - 0.5) * 150 },
+          { x: endX, y: this.height * 0.4 + this.seededRandom(seed + 8) * 200 }
+        ];
+
+        // Create curved segments between waypoints
+        for (let i = 0; i < waypoints.length - 1; i++) {
+          const start = waypoints[i];
+          const end = waypoints[i + 1];
+          
+          // Generate control points for smooth curves
+          const controlOffset = 80 + this.seededRandom(seed + i + 10) * 40;
+          const control1 = {
+            x: start.x + controlOffset * (this.seededRandom(seed + i + 20) - 0.5),
+            y: start.y + controlOffset * (this.seededRandom(seed + i + 21) - 0.5)
+          };
+          const control2 = {
+            x: end.x - controlOffset * (this.seededRandom(seed + i + 22) - 0.5),
+            y: end.y - controlOffset * (this.seededRandom(seed + i + 23) - 0.5)
+          };
+
+          pathSegments.push({
+            type: 'curved',
+            points: [start, control1, control2, end]
+          });
+        }
+
+        return pathSegments;
+      }
+
+      // Generate strategic terrain features
+      generateTerrain(seed = this.seed, pathSegments) {
+        const terrain = [];
+        const forbiddenAreas = this.calculateForbiddenAreas(pathSegments);
+
+        // Generate resource nodes (provide bonus income)
+        const resourceCount = 2 + Math.floor(this.seededRandom(seed + 40) * 2);
+        for (let i = 0; i < resourceCount; i++) {
+          const resource = this.generateTerrainFeature('resource', seed + 50 + i, forbiddenAreas);
+          if (resource) terrain.push(resource);
+        }
+
+        // Generate hills (provide tower range bonus)
+        const hillCount = 3 + Math.floor(this.seededRandom(seed + 60) * 3);
+        for (let i = 0; i < hillCount; i++) {
+          const hill = this.generateTerrainFeature('hill', seed + 100 + i, forbiddenAreas);
+          if (hill) terrain.push(hill);
+        }
+
+        // Generate forests (provide tower concealment)
+        const forestCount = 4 + Math.floor(this.seededRandom(seed + 70) * 4);
+        for (let i = 0; i < forestCount; i++) {
+          const forest = this.generateTerrainFeature('forest', seed + 200 + i, forbiddenAreas);
+          if (forest) terrain.push(forest);
+        }
+
+        // Generate rocks and decorative elements
+        const decorCount = 8 + Math.floor(this.seededRandom(seed + 80) * 8);
+        for (let i = 0; i < decorCount; i++) {
+          const decor = this.generateTerrainFeature('decoration', seed + 300 + i, forbiddenAreas);
+          if (decor) terrain.push(decor);
+        }
+
+        return terrain;
+      }
+
+      generateTerrainFeature(type, seed, forbiddenAreas) {
+        const maxAttempts = 20;
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          const x = 50 + this.seededRandom(seed + attempt) * (this.width - 100);
+          const y = 50 + this.seededRandom(seed + attempt + 1000) * (this.height - 100);
+          
+          if (!this.isPositionForbidden(x, y, forbiddenAreas)) {
+            const feature = { x, y, type };
+            
+            // Add type-specific properties
+            if (type === 'resource') {
+              feature.radius = 50;
+              feature.bonus = 'income';
+              feature.icon = '💰';
+              feature.income = 2; // Resources per second
+              feature.lastIncome = 0;
+            } else if (type === 'hill') {
+              feature.radius = 60 + this.seededRandom(seed + attempt + 2000) * 40;
+              feature.bonus = 'range';
+              feature.icon = '🏔️';
+            } else if (type === 'forest') {
+              feature.radius = 40 + this.seededRandom(seed + attempt + 3000) * 30;
+              feature.bonus = 'concealment';
+              feature.icon = '🌲';
+            } else {
+              feature.radius = 25;
+              feature.icon = ['🪨', '🏚️', '⛪'][Math.floor(this.seededRandom(seed + attempt + 4000) * 3)];
+            }
+            
+            // Add to forbidden areas for future features
+            forbiddenAreas.push({
+              x: x - feature.radius,
+              y: y - feature.radius,
+              width: feature.radius * 2,
+              height: feature.radius * 2
+            });
+            
+            return feature;
+          }
+        }
+        return null;
+      }
+
+      calculateForbiddenAreas(pathSegments) {
+        const areas = [];
+        pathSegments.forEach(segment => {
+          if (segment.type === 'curved') {
+            segment.points.forEach(point => {
+              areas.push({
+                x: point.x - 60,
+                y: point.y - 60,
+                width: 120,
+                height: 120
+              });
+            });
+          }
+        });
+        return areas;
+      }
+
+      isPositionForbidden(x, y, forbiddenAreas) {
+        return forbiddenAreas.some(area => 
+          x >= area.x && x <= area.x + area.width && 
+          y >= area.y && y <= area.y + area.height
+        );
+      }
+    }
+
+    // Global map generator instance
+    const mapGenerator = new MapGenerator();
+    let pathSegments = [];
+    let terrainFeatures = [];
 
     // Generate path points for enemy movement
-    const path = [];
+    let path = [];
     const pathResolution = 10; // Points per segment
-    pathSegments.forEach(segment => {
-      if (segment.type === 'curved') {
-        // Generate points along Bezier curve
-        for (let t = 0; t <= 1; t += 1/pathResolution) {
-          const points = segment.points;
-          // Cubic Bezier formula
-          const x = Math.pow(1-t, 3) * points[0].x + 
-                  3 * Math.pow(1-t, 2) * t * points[1].x + 
-                  3 * (1-t) * Math.pow(t, 2) * points[2].x + 
-                  Math.pow(t, 3) * points[3].x;
-          const y = Math.pow(1-t, 3) * points[0].y + 
-                  3 * Math.pow(1-t, 2) * t * points[1].y + 
-                  3 * (1-t) * Math.pow(t, 2) * points[2].y + 
-                  Math.pow(t, 3) * points[3].y;
-          path.push({ x, y });
+
+    function generateMapData(seed) {
+      mapGenerator.seed = seed || Math.random();
+      pathSegments = mapGenerator.generatePath();
+      terrainFeatures = mapGenerator.generateTerrain(mapGenerator.seed, pathSegments);
+      
+      // Generate path points for enemy movement
+      path = [];
+      pathSegments.forEach(segment => {
+        if (segment.type === 'curved') {
+          // Generate points along Bezier curve
+          for (let t = 0; t <= 1; t += 1/pathResolution) {
+            const points = segment.points;
+            // Cubic Bezier formula
+            const x = Math.pow(1-t, 3) * points[0].x + 
+                    3 * Math.pow(1-t, 2) * t * points[1].x + 
+                    3 * (1-t) * Math.pow(t, 2) * points[2].x + 
+                    Math.pow(t, 3) * points[3].x;
+            const y = Math.pow(1-t, 3) * points[0].y + 
+                    3 * Math.pow(1-t, 2) * t * points[1].y + 
+                    3 * (1-t) * Math.pow(t, 2) * points[2].y + 
+                    Math.pow(t, 3) * points[3].y;
+            path.push({ x, y });
+          }
         }
-      }
-    });
+      });
+    }
 
     // Tower definitions
     const towerTypes = {
@@ -257,72 +468,56 @@
           pathElement.style.width = `${endX - startX + 60}px`;
           pathElement.style.height = `${endY - startY + 60}px`;
           
-          // Use clip-path for curved paths
-          const clipPoints = [];
-          for (let t = 0; t <= 1; t += 0.01) {
-            const x = Math.pow(1-t, 3) * points[0].x + 
-                    3 * Math.pow(1-t, 2) * t * points[1].x + 
-                    3 * (1-t) * Math.pow(t, 2) * points[2].x + 
-                    Math.pow(t, 3) * points[3].x;
-            const y = Math.pow(1-t, 3) * points[0].y + 
-                    3 * Math.pow(1-t, 2) * t * points[1].y + 
-                    3 * (1-t) * Math.pow(t, 2) * points[2].y + 
-                    Math.pow(t, 3) * points[3].y;
-            clipPoints.push(`${x - startX + 30}px ${y - startY}px`);
-          }
-          
           gameBoard.appendChild(pathElement);
         }
       });
     }
 
-    // Add terrain elements (trees, rocks, etc.)
+    // Add procedurally generated terrain elements
     function addTerrainElements() {
-      const terrainTypes = ['🌳', '🌲', '🪨', '🏚️'];
-      const forbiddenAreas = [];
+      // Clear existing terrain
+      gameState.terrainElements.forEach(element => element.remove());
+      gameState.terrainElements = [];
       
-      // Add path areas to forbidden zones
-      pathSegments.forEach(segment => {
-        if (segment.type === 'curved') {
-          segment.points.forEach(point => {
-            forbiddenAreas.push({
-              x: point.x - 40,
-              y: point.y - 40,
-              width: 80,
-              height: 80
-            });
-          });
-        }
-      });
-      
-      // Add 20 random terrain elements
-      for (let i = 0; i < 20; i++) {
-        const x = Math.floor(Math.random() * 700) + 50;
-        const y = Math.floor(Math.random() * 400) + 50;
+      // Add generated strategic terrain
+      terrainFeatures.forEach(feature => {
+        const terrainElement = document.createElement('div');
+        terrainElement.className = `terrain ${feature.type}`;
+        terrainElement.textContent = feature.icon;
+        terrainElement.style.left = `${feature.x - feature.radius/2}px`;
+        terrainElement.style.top = `${feature.y - feature.radius/2}px`;
+        terrainElement.style.width = `${feature.radius}px`;
+        terrainElement.style.height = `${feature.radius}px`;
+        terrainElement.style.fontSize = feature.type === 'decoration' ? '20px' : '24px';
+        terrainElement.style.display = 'flex';
+        terrainElement.style.alignItems = 'center';
+        terrainElement.style.justifyContent = 'center';
         
-        // Check if position conflicts with forbidden areas
-        const isConflict = forbiddenAreas.some(area => 
-          x >= area.x && x <= area.x + area.width && 
-          y >= area.y && y <= area.y + area.height
-        );
-        
-        if (!isConflict) {
-          const terrainElement = document.createElement('div');
-          terrainElement.className = 'terrain tree';
-          terrainElement.textContent = terrainTypes[Math.floor(Math.random() * terrainTypes.length)];
-          terrainElement.style.left = `${x}px`;
-          terrainElement.style.top = `${y}px`;
-          gameBoard.appendChild(terrainElement);
+        // Add bonus indicator for strategic terrain
+        if (feature.bonus) {
+          const bonusIndicator = document.createElement('div');
+          bonusIndicator.className = 'terrain-bonus';
+          if (feature.bonus === 'range') {
+            bonusIndicator.textContent = '+RNG';
+          } else if (feature.bonus === 'concealment') {
+            bonusIndicator.textContent = '+CON';
+          } else if (feature.bonus === 'income') {
+            bonusIndicator.textContent = '+$$$';
+          }
+          terrainElement.appendChild(bonusIndicator);
           
-          // Add to forbidden areas for future elements
-          forbiddenAreas.push({ x: x - 40, y: y - 40, width: 80, height: 80 });
-          gameState.terrainElements.push(terrainElement);
+          // Store terrain data for tower bonuses
+          terrainElement.terrainData = feature;
         }
-      }
+        
+        gameBoard.appendChild(terrainElement);
+        gameState.terrainElements.push(terrainElement);
+      });
     }
 
     // Initialize the game
     function initGame() {
+      generateMapData(); // Generate new map
       createPathVisualization();
       addTerrainElements();
       updateInfoPanel();
@@ -372,6 +567,7 @@
         if (gameState.frameCounter % 5 === 0) {
           checkWaveStatus();
           checkTowerReloading();
+          updateResourceNodes();
         }
         
         gameState.animationFrameId = requestAnimationFrame(gameLoop);
@@ -468,6 +664,62 @@
       });
     }
 
+    // Update resource nodes to generate income
+    function updateResourceNodes() {
+      const currentTime = Date.now();
+      
+      terrainFeatures.forEach(feature => {
+        if (feature.bonus === 'income') {
+          if (currentTime - feature.lastIncome >= 1000) { // Every 1 second
+            // Check if any tower is near this resource node
+            const nearbyTower = gameState.towers.find(tower => {
+              const dx = tower.x - feature.x;
+              const dy = tower.y - feature.y;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              return distance <= feature.radius;
+            });
+            
+            if (nearbyTower) {
+              gameState.resources += feature.income;
+              updateInfoPanel();
+              feature.lastIncome = currentTime;
+              
+              // Visual feedback
+              showResourceGain(feature.x, feature.y, feature.income);
+            }
+          }
+        }
+      });
+    }
+
+    // Show visual feedback for resource gain
+    function showResourceGain(x, y, amount) {
+      const popup = document.createElement('div');
+      popup.textContent = `+${amount}`;
+      popup.style.position = 'absolute';
+      popup.style.left = `${x}px`;
+      popup.style.top = `${y - 20}px`;
+      popup.style.color = '#32cd32';
+      popup.style.fontWeight = 'bold';
+      popup.style.fontSize = '14px';
+      popup.style.pointerEvents = 'none';
+      popup.style.zIndex = '15';
+      popup.style.animation = 'fadeUpOut 1s forwards';
+      
+      // Add animation
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes fadeUpOut {
+          0% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(-30px); }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      gameBoard.appendChild(popup);
+      setTimeout(() => popup.remove(), 1000);
+    }
+
     // Optimized bullet movement and collision detection
     function updateBullets(deltaTime) {
       const bulletsToRemove = [];
@@ -545,12 +797,12 @@
     }
 
     function isOnPath(x, y) {
-      // Check distance to path points
+      // Check distance to path points (dynamic path)
       for (let i = 0; i < path.length; i++) {
         const dx = path[i].x - x;
         const dy = path[i].y - y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < 30) return true;
+        if (distance < 35) return true; // Slightly larger radius for curved paths
       }
       return false;
     }
@@ -563,19 +815,49 @@
       });
     }
 
-    // More efficient tower creation
+    // Check for terrain bonuses at position
+    function getTerrainBonus(x, y) {
+      for (let terrainElement of gameState.terrainElements) {
+        if (terrainElement.terrainData && terrainElement.terrainData.bonus) {
+          const terrain = terrainElement.terrainData;
+          const dx = terrain.x - x;
+          const dy = terrain.y - y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance <= terrain.radius) {
+            return terrain.bonus;
+          }
+        }
+      }
+      return null;
+    }
+
+    // More efficient tower creation with terrain bonuses
     function createTower(x, y, type) {
       const tower = document.createElement('div');
       tower.className = `tower ${type}`;
       tower.textContent = towerTypes[type].icon;
       
+      // Check for terrain bonuses
+      const terrainBonus = getTerrainBonus(x, y);
+      let baseRange = towerTypes[type].range;
+      
+      // Apply terrain bonuses
+      if (terrainBonus === 'range') {
+        baseRange *= 1.25; // 25% range bonus on hills
+        tower.style.boxShadow = '0 0 8px 2px rgba(139, 125, 57, 0.6)'; // Golden glow
+      } else if (terrainBonus === 'concealment') {
+        tower.style.opacity = '0.8'; // Slightly transparent in forests
+        tower.style.boxShadow = '0 0 8px 2px rgba(58, 73, 41, 0.6)'; // Green glow
+      }
+      
       // Create range indicator
       const range = document.createElement('div');
       range.className = 'tower-range';
-      range.style.width = `${towerTypes[type].range * 2}px`;
-      range.style.height = `${towerTypes[type].range * 2}px`;
-      range.style.left = `-${towerTypes[type].range - 20}px`;
-      range.style.top = `-${towerTypes[type].range - 20}px`;
+      range.style.width = `${baseRange * 2}px`;
+      range.style.height = `${baseRange * 2}px`;
+      range.style.left = `-${baseRange - 20}px`;
+      range.style.top = `-${baseRange - 20}px`;
       tower.appendChild(range);
       
       // Create ammo bar
@@ -595,7 +877,7 @@
       const towerObj = {
         x, y, type, element: tower, lastFired: 0,
         damage: towerTypes[type].damage,
-        range: towerTypes[type].range,
+        range: baseRange, // Use modified range
         fireRate: towerTypes[type].fireRate,
         targets: towerTypes[type].targets,
         ammo: towerTypes[type].ammo,
@@ -603,11 +885,17 @@
         reloadTime: towerTypes[type].reloadTime,
         reloading: false,
         ammoBar: ammoFill,
-        level: { damage: 1, range: 1, rate: 1 }
+        level: { damage: 1, range: 1, rate: 1 },
+        terrainBonus: terrainBonus // Store bonus type
       };
       
       if (type === 'artillery') {
         towerObj.splash = towerTypes[type].splash;
+      }
+      
+      // Add concealment bonus (AA towers can't target this tower if in forest)
+      if (terrainBonus === 'concealment') {
+        towerObj.concealed = true;
       }
       
       // Add events
@@ -950,10 +1238,31 @@
         option.classList.remove('selected');
       });
       
-      // Reinitialize game
+      // Reinitialize game with new map
+      generateMapData(); // Generate new random map
       createPathVisualization();
       addTerrainElements();
       updateInfoPanel();
+    }
+
+    // Generate a new map without resetting the game
+    function generateNewMap() {
+      if (gameState.waveInProgress) {
+        alert("Cannot generate new map during a wave!");
+        return;
+      }
+      
+      // Clear existing map elements
+      gameState.terrainElements.forEach(element => element.remove());
+      gameState.terrainElements = [];
+      
+      // Clear existing path visualization
+      document.querySelectorAll('.path').forEach(path => path.remove());
+      
+      // Generate new map
+      generateMapData();
+      createPathVisualization();
+      addTerrainElements();
     }
 
     // Utility functions
