@@ -26,4 +26,5 @@ A strategic tower defense game set in WWII, featuring procedural map generation 
 - Click existing towers to upgrade
 - Use the pause button to plan your strategy
 
-![image](https://github.com/user-attachments/assets/ecc6b528-92f7-4aa7-bd31-c0821947681d)
+
+![image](https://github.com/user-attachments/assets/e5432b93-4554-475d-881b-b238246aa5e7)
