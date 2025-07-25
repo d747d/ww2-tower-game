@@ -69,8 +69,347 @@
     .tower-option.selected { border-color: #ffcc00; box-shadow: 0 0 10px #ffcc00; }
     .tower-icon { font-size: 24px; margin-bottom: 5px; }
     .tower-cost { font-size: 12px; font-weight: bold; color: #ffcc00; }
-    .tower { position: absolute; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-size: 20px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); }
+    .tower { 
+      position: absolute; 
+      width: 40px; 
+      height: 40px; 
+      border-radius: 50%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      cursor: pointer; 
+      z-index: 10; 
+      font-size: 20px; 
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      transition: transform 0.1s ease-out;
+      overflow: visible;
+    }
     .tower:hover { box-shadow: 0 0 8px 3px #ffcc00; }
+    
+    /* Tower turret (for rotation animations) */
+    .tower-turret {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease-out;
+      transform-origin: center center;
+    }
+    
+    /* Tower barrel (extends from turret) */
+    .tower-barrel {
+      position: absolute;
+      background-color: #333;
+      border-radius: 2px;
+      transform-origin: left center;
+      transition: transform 0.1s ease-out;
+      z-index: -1;
+    }
+    
+    /* Different barrel styles for each tower type */
+    .tower.mg .tower-barrel {
+      width: 25px;
+      height: 3px;
+      right: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #666;
+    }
+    
+    .tower.artillery .tower-barrel {
+      width: 30px;
+      height: 6px;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #4a7b49;
+    }
+    
+    .tower.aa .tower-barrel {
+      width: 20px;
+      height: 4px;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #3a6da3;
+    }
+    
+    .tower.sniper .tower-barrel {
+      width: 35px;
+      height: 2px;
+      right: -22px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #8a4f3b;
+    }
+    
+    /* Recoil animation */
+    @keyframes recoilAnimation {
+      0% { transform: scale(1); }
+      20% { transform: scale(0.95) translateX(-2px); }
+      100% { transform: scale(1) translateX(0); }
+    }
+    
+    @keyframes barrelRecoil {
+      0% { transform: translateY(-50%) scaleX(1); }
+      30% { transform: translateY(-50%) scaleX(0.8); }
+      100% { transform: translateY(-50%) scaleX(1); }
+    }
+    
+    /* Firing animation classes */
+    .tower.firing {
+      animation: recoilAnimation 0.2s ease-out;
+    }
+    
+    .tower.firing .tower-barrel {
+      animation: barrelRecoil 0.2s ease-out;
+    }
+    
+    /* Rotating animation for radar */
+    .tower.radar .tower-turret {
+      animation: radarRotate 4s linear infinite;
+    }
+    
+    @keyframes radarRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Idle animation for active towers */
+    .tower.active {
+      animation: towerIdle 3s ease-in-out infinite;
+    }
+    
+    @keyframes towerIdle {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    /* Dynamic Lighting Effects */
+    .light-effect {
+      position: absolute;
+      pointer-events: none;
+      border-radius: 50%;
+      z-index: 12;
+      mix-blend-mode: screen;
+    }
+    
+    /* Explosion lighting */
+    .light-effect.explosion-light {
+      background: radial-gradient(circle, 
+        rgba(255, 165, 0, 0.8) 0%, 
+        rgba(255, 69, 0, 0.6) 30%, 
+        rgba(255, 140, 0, 0.3) 60%, 
+        transparent 100%);
+      animation: explosionLight 0.8s ease-out forwards;
+    }
+    
+    @keyframes explosionLight {
+      0% { 
+        transform: scale(0.2); 
+        opacity: 1; 
+      }
+      30% { 
+        transform: scale(1.5); 
+        opacity: 0.9; 
+      }
+      100% { 
+        transform: scale(3); 
+        opacity: 0; 
+      }
+    }
+    
+    /* Muzzle flash lighting */
+    .light-effect.muzzle-light {
+      background: radial-gradient(circle, 
+        rgba(255, 255, 100, 0.7) 0%, 
+        rgba(255, 200, 50, 0.4) 50%, 
+        transparent 100%);
+      animation: muzzleLight 0.15s ease-out forwards;
+    }
+    
+    @keyframes muzzleLight {
+      0% { 
+        transform: scale(0.5); 
+        opacity: 1; 
+      }
+      100% { 
+        transform: scale(2); 
+        opacity: 0; 
+      }
+    }
+    
+    /* Artillery shell light trail */
+    .light-effect.shell-light {
+      background: radial-gradient(circle, 
+        rgba(255, 140, 0, 0.6) 0%, 
+        rgba(255, 69, 0, 0.3) 50%, 
+        transparent 100%);
+      animation: shellLight 0.4s ease-out forwards;
+    }
+    
+    @keyframes shellLight {
+      0% { 
+        transform: scale(0.8); 
+        opacity: 0.8; 
+      }
+      100% { 
+        transform: scale(1.5); 
+        opacity: 0; 
+      }
+    }
+    
+    /* Ambient lighting for active towers */
+    .tower.active::after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle, 
+        rgba(255, 215, 0, 0.1) 0%, 
+        rgba(255, 215, 0, 0.05) 50%, 
+        transparent 100%);
+      border-radius: 50%;
+      top: -10px;
+      left: -10px;
+      pointer-events: none;
+      z-index: -1;
+      animation: ambientGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes ambientGlow {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.1); }
+    }
+    
+    /* Environmental lighting effects */
+    .light-effect.resource-glow {
+      background: radial-gradient(circle, 
+        rgba(255, 215, 0, 0.2) 0%, 
+        rgba(255, 215, 0, 0.1) 50%, 
+        transparent 100%);
+      animation: resourceGlow 3s ease-in-out infinite;
+    }
+    
+    @keyframes resourceGlow {
+      0%, 100% { opacity: 0.4; transform: scale(0.8); }
+      50% { opacity: 0.8; transform: scale(1.2); }
+    }
+    
+    /* Screen overlay for dramatic lighting moments */
+    .screen-flash {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      pointer-events: none;
+      z-index: 20;
+      animation: screenFlash 0.1s ease-out forwards;
+    }
+    
+    @keyframes screenFlash {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    
+    /* Weather System */
+    .weather-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 18;
+    }
+    
+    /* Rain Effect */
+    .rain-drop {
+      position: absolute;
+      width: 2px;
+      height: 15px;
+      background: linear-gradient(to bottom, rgba(173, 216, 230, 0.8), rgba(173, 216, 230, 0.2));
+      border-radius: 1px;
+      animation: rainFall linear infinite;
+    }
+    
+    @keyframes rainFall {
+      to {
+        transform: translateY(500px);
+        opacity: 0;
+      }
+    }
+    
+    /* Fog Effect */
+    .fog-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 120%;
+      height: 120%;
+      background: radial-gradient(ellipse at center, 
+        rgba(220, 220, 220, 0.3) 0%, 
+        rgba(200, 200, 200, 0.6) 30%, 
+        rgba(180, 180, 180, 0.4) 70%, 
+        transparent 100%);
+      animation: fogDrift 20s ease-in-out infinite;
+    }
+    
+    @keyframes fogDrift {
+      0%, 100% { 
+        transform: translateX(-10%) translateY(-10%); 
+        opacity: 0.6; 
+      }
+      50% { 
+        transform: translateX(10%) translateY(10%); 
+        opacity: 0.8; 
+      }
+    }
+    
+    /* Snow Effect */
+    .snow-flake {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: snowFall linear infinite;
+    }
+    
+    @keyframes snowFall {
+      to {
+        transform: translateY(500px) translateX(50px);
+        opacity: 0;
+      }
+    }
+    
+    /* Weather visibility effects */
+    .weather-reduced-visibility {
+      filter: blur(1px) contrast(0.8);
+    }
+    
+    .weather-heavy-reduced-visibility {
+      filter: blur(2px) contrast(0.6) brightness(0.8);
+    }
+    
+    /* Weather UI indicator */
+    .weather-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      display: none;
+      z-index: 25;
+    }
     .tower.mg { background-color: #3a3a3a; border: 2px solid #6e6e6e; }
     .tower.artillery { background-color: #2d572c; border: 2px solid #4a7b49; }
     .tower.aa { background-color: #1a3e5c; border: 2px solid #3a6da3; }
@@ -140,6 +479,118 @@
     .action-btn { padding: 4px 8px; margin: 2px; background-color: #444; color: white; border: 1px solid #666; border-radius: 3px; font-size: 12px; cursor: pointer; }
     .action-btn:hover { background-color: #555; }
     .action-btn.disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    /* Particle System */
+    .particle { 
+      position: absolute; 
+      pointer-events: none; 
+      z-index: 15; 
+      border-radius: 50%; 
+    }
+    
+    /* Explosion particles */
+    .particle.explosion { 
+      background: radial-gradient(circle, #ff6600 0%, #ff9900 50%, #ffcc00 100%);
+      animation: explodeParticle 0.8s ease-out forwards;
+    }
+    
+    @keyframes explodeParticle {
+      0% { 
+        transform: scale(1) rotate(0deg); 
+        opacity: 1; 
+      }
+      100% { 
+        transform: scale(0.1) rotate(360deg); 
+        opacity: 0; 
+      }
+    }
+    
+    /* Muzzle flash particles */
+    .particle.muzzle { 
+      background: radial-gradient(circle, #ffff00 0%, #ff6600 50%, transparent 100%);
+      animation: muzzleFlash 0.2s ease-out forwards;
+    }
+    
+    @keyframes muzzleFlash {
+      0% { 
+        transform: scale(0.5); 
+        opacity: 1; 
+      }
+      100% { 
+        transform: scale(2); 
+        opacity: 0; 
+      }
+    }
+    
+    /* Smoke particles */
+    .particle.smoke { 
+      background: radial-gradient(circle, rgba(80, 80, 80, 0.8) 0%, rgba(120, 120, 120, 0.4) 50%, transparent 100%);
+      animation: smokeRise 2s ease-out forwards;
+    }
+    
+    @keyframes smokeRise {
+      0% { 
+        transform: scale(0.5) translateY(0); 
+        opacity: 0.8; 
+      }
+      100% { 
+        transform: scale(2) translateY(-50px); 
+        opacity: 0; 
+      }
+    }
+    
+    /* Bullet trail particles */
+    .particle.trail { 
+      background: linear-gradient(90deg, #ffcc00 0%, transparent 100%);
+      border-radius: 50%;
+      animation: trailFade 0.3s ease-out forwards;
+    }
+    
+    @keyframes trailFade {
+      0% { 
+        opacity: 0.8; 
+        transform: scale(1); 
+      }
+      100% { 
+        opacity: 0; 
+        transform: scale(0.2); 
+      }
+    }
+    
+    /* Spark particles */
+    .particle.spark { 
+      background: #ffff00;
+      animation: sparkFly 0.5s ease-out forwards;
+    }
+    
+    @keyframes sparkFly {
+      0% { 
+        opacity: 1; 
+        transform: scale(1); 
+      }
+      100% { 
+        opacity: 0; 
+        transform: scale(0.1); 
+      }
+    }
+    
+    /* Artillery shell particles */
+    .particle.shell { 
+      background: #8B4513;
+      border-radius: 20%;
+      animation: shellFly 0.4s ease-out forwards;
+    }
+    
+    @keyframes shellFly {
+      0% { 
+        opacity: 1; 
+        transform: scale(1) rotate(0deg); 
+      }
+      100% { 
+        opacity: 0; 
+        transform: scale(0.3) rotate(180deg); 
+      }
+    }
   </style>
 </head>
 <body>
@@ -160,6 +611,8 @@
   <div id="game-container">
     <div id="game-board">
       <!-- Paths will be created dynamically -->
+      <div class="weather-overlay" id="weather-overlay"></div>
+      <div class="weather-indicator" id="weather-indicator">Clear</div>
     </div>
     <div id="game-over">
       <h2 class="game-over-title">Game Over!</h2>
@@ -230,10 +683,530 @@
       towers: [], enemies: [], bullets: [], animationFrameId: null, difficulty: 'normal',
       lastFrameTime: 0, terrainElements: [], frameCounter: 0, enemySpeedMultiplier: 0.025,
       walls: [], mines: [], radarCoverage: false, nextWavePreview: null, supplyConvoys: [],
-      lastConvoyTime: 0, performanceMetrics: {
+      lastConvoyTime: 0, particles: [], weather: { type: 'clear', intensity: 0, lastChange: 0 },
+      performanceMetrics: {
         enemiesKilled: 0, wavesCompleted: 0, accuracy: 100, efficiency: 100
       }
     };
+
+    // Particle System
+    class ParticleSystem {
+      static createExplosionParticles(x, y, intensity = 8) {
+        // Main explosion particles
+        for (let i = 0; i < intensity; i++) {
+          const angle = (Math.PI * 2 * i) / intensity;
+          const speed = 50 + Math.random() * 30;
+          const size = 6 + Math.random() * 8;
+          
+          this.createParticle({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            size: size,
+            type: 'explosion',
+            life: 0.8
+          });
+        }
+        
+        // Smoke particles
+        for (let i = 0; i < 4; i++) {
+          this.createParticle({
+            x: x + (Math.random() - 0.5) * 20,
+            y: y + (Math.random() - 0.5) * 20,
+            vx: (Math.random() - 0.5) * 20,
+            vy: -20 - Math.random() * 10,
+            size: 15 + Math.random() * 10,
+            type: 'smoke',
+            life: 2
+          });
+        }
+        
+        // Sparks
+        for (let i = 0; i < 6; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 40 + Math.random() * 40;
+          
+          this.createParticle({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            size: 2 + Math.random() * 3,
+            type: 'spark',
+            life: 0.5
+          });
+        }
+      }
+      
+      static createMuzzleFlash(x, y, angle = 0) {
+        // Main muzzle flash
+        this.createParticle({
+          x: x,
+          y: y,
+          vx: 0,
+          vy: 0,
+          size: 15 + Math.random() * 10,
+          type: 'muzzle',
+          life: 0.2,
+          rotation: angle
+        });
+        
+        // Sparks from muzzle
+        for (let i = 0; i < 3; i++) {
+          const sparkAngle = angle + (Math.random() - 0.5) * 0.5;
+          const speed = 30 + Math.random() * 20;
+          
+          this.createParticle({
+            x: x,
+            y: y,
+            vx: Math.cos(sparkAngle) * speed,
+            vy: Math.sin(sparkAngle) * speed,
+            size: 1 + Math.random() * 2,
+            type: 'spark',
+            life: 0.3
+          });
+        }
+      }
+      
+      static createBulletTrail(x, y, targetX, targetY, bulletType = 'mg') {
+        const dx = targetX - x;
+        const dy = targetY - y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx);
+        
+        // Create trail particles along bullet path
+        const trailLength = Math.min(distance, 60);
+        const numTrails = Math.floor(trailLength / 10);
+        
+        for (let i = 0; i < numTrails; i++) {
+          const progress = i / numTrails;
+          const trailX = x + dx * progress;
+          const trailY = y + dy * progress;
+          
+          this.createParticle({
+            x: trailX,
+            y: trailY,
+            vx: 0,
+            vy: 0,
+            size: bulletType === 'artillery' ? 4 : 2,
+            type: 'trail',
+            life: 0.3,
+            rotation: angle,
+            delay: i * 0.02 // Stagger the trail
+          });
+        }
+      }
+      
+      static createArtilleryShell(x, y, targetX, targetY) {
+        // Create shell particle that follows arc
+        const dx = targetX - x;
+        const dy = targetY - y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        this.createParticle({
+          x: x,
+          y: y,
+          vx: dx * 0.01,
+          vy: dy * 0.01 - distance * 0.001, // Arc trajectory
+          size: 6,
+          type: 'shell',
+          life: 0.4,
+          gravity: 0.5
+        });
+      }
+      
+      static createParticle(config) {
+        const particle = document.createElement('div');
+        particle.className = `particle ${config.type}`;
+        particle.style.width = `${config.size}px`;
+        particle.style.height = `${config.size}px`;
+        particle.style.left = `${config.x - config.size/2}px`;
+        particle.style.top = `${config.y - config.size/2}px`;
+        
+        if (config.rotation !== undefined) {
+          particle.style.transform = `rotate(${config.rotation}rad)`;
+        }
+        
+        if (config.delay) {
+          particle.style.animationDelay = `${config.delay}s`;
+        }
+        
+        gameBoard.appendChild(particle);
+        
+        const particleObj = {
+          element: particle,
+          x: config.x,
+          y: config.y,
+          vx: config.vx || 0,
+          vy: config.vy || 0,
+          size: config.size,
+          life: config.life,
+          maxLife: config.life,
+          type: config.type,
+          gravity: config.gravity || 0
+        };
+        
+        gameState.particles.push(particleObj);
+        
+        // Remove particle after animation
+        setTimeout(() => {
+          this.removeParticle(particleObj);
+        }, config.life * 1000);
+      }
+      
+      static updateParticles(deltaTime) {
+        const particlesToRemove = [];
+        
+        gameState.particles.forEach(particle => {
+          // Update physics for certain particle types
+          if (particle.type === 'explosion' || particle.type === 'spark' || particle.type === 'shell') {
+            particle.x += particle.vx * deltaTime * 0.01;
+            particle.y += particle.vy * deltaTime * 0.01;
+            
+            if (particle.gravity) {
+              particle.vy += particle.gravity * deltaTime * 0.1;
+            }
+            
+            particle.element.style.left = `${particle.x - particle.size/2}px`;
+            particle.element.style.top = `${particle.y - particle.size/2}px`;
+          }
+          
+          // Update life
+          particle.life -= deltaTime * 0.001;
+          if (particle.life <= 0) {
+            particlesToRemove.push(particle);
+          }
+        });
+        
+        particlesToRemove.forEach(particle => this.removeParticle(particle));
+      }
+      
+      static removeParticle(particle) {
+        if (particle.element && particle.element.parentNode) {
+          particle.element.remove();
+        }
+        const index = gameState.particles.indexOf(particle);
+        if (index !== -1) {
+          gameState.particles.splice(index, 1);
+        }
+      }
+      
+      static clearAllParticles() {
+        gameState.particles.forEach(particle => {
+          if (particle.element && particle.element.parentNode) {
+            particle.element.remove();
+          }
+        });
+        gameState.particles = [];
+      }
+    }
+
+    // Dynamic Lighting System
+    class LightingSystem {
+      static createExplosionLight(x, y, intensity = 1) {
+        const light = document.createElement('div');
+        light.className = 'light-effect explosion-light';
+        const size = 80 * intensity;
+        light.style.width = `${size}px`;
+        light.style.height = `${size}px`;
+        light.style.left = `${x - size/2}px`;
+        light.style.top = `${y - size/2}px`;
+        
+        gameBoard.appendChild(light);
+        
+        // Add screen flash for large explosions
+        if (intensity > 1.5) {
+          this.createScreenFlash();
+        }
+        
+        setTimeout(() => light.remove(), 800);
+      }
+      
+      static createMuzzleLight(x, y, angle = 0) {
+        const light = document.createElement('div');
+        light.className = 'light-effect muzzle-light';
+        light.style.width = '40px';
+        light.style.height = '40px';
+        light.style.left = `${x - 20}px`;
+        light.style.top = `${y - 20}px`;
+        
+        gameBoard.appendChild(light);
+        setTimeout(() => light.remove(), 150);
+      }
+      
+      static createShellLight(x, y) {
+        const light = document.createElement('div');
+        light.className = 'light-effect shell-light';
+        light.style.width = '30px';
+        light.style.height = '30px';
+        light.style.left = `${x - 15}px`;
+        light.style.top = `${y - 15}px`;
+        
+        gameBoard.appendChild(light);
+        setTimeout(() => light.remove(), 400);
+      }
+      
+      static createScreenFlash() {
+        const flash = document.createElement('div');
+        flash.className = 'screen-flash';
+        gameBoard.appendChild(flash);
+        setTimeout(() => flash.remove(), 100);
+      }
+      
+      static addResourceGlow(element, x, y) {
+        const glow = document.createElement('div');
+        glow.className = 'light-effect resource-glow';
+        glow.style.width = '80px';
+        glow.style.height = '80px';
+        glow.style.left = `${x - 40}px`;
+        glow.style.top = `${y - 40}px`;
+        
+        gameBoard.appendChild(glow);
+        
+        // Store reference to remove later
+        element.lightGlow = glow;
+      }
+      
+      static removeResourceGlow(element) {
+        if (element.lightGlow && element.lightGlow.parentNode) {
+          element.lightGlow.remove();
+          element.lightGlow = null;
+        }
+      }
+      
+      static clearAllLights() {
+        document.querySelectorAll('.light-effect').forEach(light => light.remove());
+        document.querySelectorAll('.screen-flash').forEach(flash => flash.remove());
+      }
+    }
+
+    // Weather System
+    class WeatherSystem {
+      static weatherTypes = ['clear', 'rain', 'fog', 'snow'];
+      static weatherOverlay = null;
+      static weatherIndicator = null;
+      
+      static init() {
+        this.weatherOverlay = document.getElementById('weather-overlay');
+        this.weatherIndicator = document.getElementById('weather-indicator');
+      }
+      
+      static updateWeather(currentTime) {
+        // Change weather every 30-60 seconds
+        if (currentTime - gameState.weather.lastChange > 30000 + Math.random() * 30000) {
+          this.changeWeather();
+          gameState.weather.lastChange = currentTime;
+        }
+        
+        // Update weather effects
+        this.updateWeatherEffects();
+      }
+      
+      static changeWeather() {
+        // More likely to have clear weather, less chance of severe weather
+        const weatherChances = [0.4, 0.25, 0.2, 0.15]; // clear, rain, fog, snow
+        const random = Math.random();
+        let cumulativeChance = 0;
+        
+        for (let i = 0; i < this.weatherTypes.length; i++) {
+          cumulativeChance += weatherChances[i];
+          if (random <= cumulativeChance) {
+            gameState.weather.type = this.weatherTypes[i];
+            break;
+          }
+        }
+        
+        // Set intensity (0.3 to 1.0)
+        gameState.weather.intensity = 0.3 + Math.random() * 0.7;
+        
+        this.applyWeatherEffects();
+        this.updateWeatherIndicator();
+      }
+      
+      static applyWeatherEffects() {
+        // Clear previous weather effects
+        this.clearWeatherEffects();
+        
+        const weather = gameState.weather;
+        
+        switch (weather.type) {
+          case 'rain':
+            this.createRainEffect(weather.intensity);
+            this.applyVisibilityReduction('light');
+            break;
+          case 'fog':
+            this.createFogEffect(weather.intensity);
+            this.applyVisibilityReduction('heavy');
+            break;
+          case 'snow':
+            this.createSnowEffect(weather.intensity);
+            this.applyVisibilityReduction('light');
+            break;
+          default:
+            this.clearVisibilityEffects();
+        }
+      }
+      
+      static createRainEffect(intensity) {
+        const numDrops = Math.floor(50 * intensity);
+        
+        for (let i = 0; i < numDrops; i++) {
+          setTimeout(() => {
+            if (gameState.weather.type === 'rain') {
+              this.createRainDrop();
+            }
+          }, Math.random() * 1000);
+        }
+        
+        // Continue creating rain drops while weather is active
+        if (gameState.weather.type === 'rain') {
+          setTimeout(() => {
+            if (gameState.weather.type === 'rain') {
+              this.createRainEffect(intensity);
+            }
+          }, 1000);
+        }
+      }
+      
+      static createRainDrop() {
+        const drop = document.createElement('div');
+        drop.className = 'rain-drop';
+        drop.style.left = `${Math.random() * 100}%`;
+        drop.style.top = '-20px';
+        drop.style.animationDuration = `${0.5 + Math.random() * 0.5}s`;
+        drop.style.animationDelay = `${Math.random() * 0.2}s`;
+        
+        this.weatherOverlay.appendChild(drop);
+        
+        setTimeout(() => {
+          if (drop.parentNode) {
+            drop.remove();
+          }
+        }, 1000);
+      }
+      
+      static createFogEffect(intensity) {
+        const fog = document.createElement('div');
+        fog.className = 'fog-layer';
+        fog.style.opacity = intensity * 0.8;
+        this.weatherOverlay.appendChild(fog);
+      }
+      
+      static createSnowEffect(intensity) {
+        const numFlakes = Math.floor(30 * intensity);
+        
+        for (let i = 0; i < numFlakes; i++) {
+          setTimeout(() => {
+            if (gameState.weather.type === 'snow') {
+              this.createSnowFlake();
+            }
+          }, Math.random() * 2000);
+        }
+        
+        // Continue creating snowflakes
+        if (gameState.weather.type === 'snow') {
+          setTimeout(() => {
+            if (gameState.weather.type === 'snow') {
+              this.createSnowEffect(intensity);
+            }
+          }, 2000);
+        }
+      }
+      
+      static createSnowFlake() {
+        const flake = document.createElement('div');
+        flake.className = 'snow-flake';
+        flake.style.left = `${Math.random() * 100}%`;
+        flake.style.top = '-10px';
+        flake.style.animationDuration = `${2 + Math.random() * 3}s`;
+        flake.style.animationDelay = `${Math.random() * 1}s`;
+        
+        this.weatherOverlay.appendChild(flake);
+        
+        setTimeout(() => {
+          if (flake.parentNode) {
+            flake.remove();
+          }
+        }, 6000);
+      }
+      
+      static applyVisibilityReduction(level) {
+        const gameBoard = document.getElementById('game-board');
+        
+        if (level === 'light') {
+          gameBoard.classList.add('weather-reduced-visibility');
+        } else if (level === 'heavy') {
+          gameBoard.classList.add('weather-heavy-reduced-visibility');
+        }
+        
+        // Reduce tower range in bad weather
+        gameState.towers.forEach(tower => {
+          if (!tower.originalRange) {
+            tower.originalRange = tower.range;
+          }
+          
+          const reduction = level === 'heavy' ? 0.7 : 0.85;
+          tower.range = tower.originalRange * reduction;
+          
+          // Update range indicator
+          const rangeIndicator = tower.element.querySelector('.tower-range');
+          if (rangeIndicator) {
+            rangeIndicator.style.width = `${tower.range * 2}px`;
+            rangeIndicator.style.height = `${tower.range * 2}px`;
+            rangeIndicator.style.left = `-${tower.range - 20}px`;
+            rangeIndicator.style.top = `-${tower.range - 20}px`;
+          }
+        });
+      }
+      
+      static clearVisibilityEffects() {
+        const gameBoard = document.getElementById('game-board');
+        gameBoard.classList.remove('weather-reduced-visibility', 'weather-heavy-reduced-visibility');
+        
+        // Restore original tower ranges
+        gameState.towers.forEach(tower => {
+          if (tower.originalRange) {
+            tower.range = tower.originalRange;
+            
+            // Update range indicator
+            const rangeIndicator = tower.element.querySelector('.tower-range');
+            if (rangeIndicator) {
+              rangeIndicator.style.width = `${tower.range * 2}px`;
+              rangeIndicator.style.height = `${tower.range * 2}px`;
+              rangeIndicator.style.left = `-${tower.range - 20}px`;
+              rangeIndicator.style.top = `-${tower.range - 20}px`;
+            }
+          }
+        });
+      }
+      
+      static clearWeatherEffects() {
+        if (this.weatherOverlay) {
+          this.weatherOverlay.innerHTML = '';
+        }
+        this.clearVisibilityEffects();
+      }
+      
+      static updateWeatherIndicator() {
+        if (this.weatherIndicator) {
+          const weather = gameState.weather;
+          let text = weather.type.charAt(0).toUpperCase() + weather.type.slice(1);
+          
+          if (weather.type !== 'clear') {
+            const intensityText = weather.intensity > 0.7 ? 'Heavy ' : weather.intensity > 0.4 ? 'Light ' : '';
+            text = intensityText + text;
+          }
+          
+          this.weatherIndicator.textContent = text;
+          this.weatherIndicator.style.display = weather.type === 'clear' ? 'none' : 'block';
+        }
+      }
+      
+      static updateWeatherEffects() {
+        // Update any dynamic weather effects here if needed
+      }
+    }
 
     // Map generation system
     class MapGenerator {
@@ -550,6 +1523,11 @@
           
           // Store terrain data for tower bonuses
           terrainElement.terrainData = feature;
+          
+          // Add lighting effects for resource nodes
+          if (feature.bonus === 'income') {
+            LightingSystem.addResourceGlow(terrainElement, feature.x, feature.y);
+          }
         }
         
         gameBoard.appendChild(terrainElement);
@@ -563,6 +1541,9 @@
       createPathVisualization();
       addTerrainElements();
       updateInfoPanel();
+      
+      // Initialize weather system
+      WeatherSystem.init();
       
       // Set up difficulty selection
       document.querySelectorAll('.difficulty-btn').forEach(btn => {
@@ -600,6 +1581,7 @@
         // Always update enemy positions every frame
         moveEnemies(deltaTime);
         updateBullets(deltaTime);
+        ParticleSystem.updateParticles(deltaTime);
         
         // Stagger more expensive operations
         if (gameState.frameCounter % 2 === 0) {
@@ -614,6 +1596,11 @@
           updateCommandBonuses();
           updateSupplyConvoys(deltaTime);
           spawnSupplyConvoy();
+          updateTowerAnimations();
+        }
+        
+        if (gameState.frameCounter % 60 === 0) { // Update weather less frequently
+          WeatherSystem.updateWeather(timestamp);
         }
         
         gameState.animationFrameId = requestAnimationFrame(gameLoop);
@@ -1061,7 +2048,19 @@
     function createTower(x, y, type) {
       const tower = document.createElement('div');
       tower.className = `tower ${type}`;
-      tower.textContent = towerTypes[type].icon;
+      
+      // Create turret for rotation
+      const turret = document.createElement('div');
+      turret.className = 'tower-turret';
+      turret.textContent = towerTypes[type].icon;
+      tower.appendChild(turret);
+      
+      // Create barrel for combat towers (not support towers)
+      if (towerTypes[type].damage > 0) {
+        const barrel = document.createElement('div');
+        barrel.className = 'tower-barrel';
+        turret.appendChild(barrel);
+      }
       
       // Check for terrain bonuses
       const terrainBonus = getTerrainBonus(x, y);
@@ -1112,7 +2111,9 @@
         ammoBar: ammoFill,
         level: { damage: 1, range: 1, rate: 1 },
         terrainBonus: terrainBonus, // Store bonus type
-        special: towerTypes[type].special || null
+        special: towerTypes[type].special || null,
+        turret: turret, // Reference to turret element for rotation
+        currentRotation: 0 // Track current turret rotation
       };
       
       if (type === 'artillery') {
@@ -1508,6 +2509,37 @@
     }
 
     function fireTower(tower, target) {
+      // Calculate firing angle for particle effects and turret rotation
+      const dx = target.x - tower.x;
+      const dy = target.y - tower.y;
+      const angle = Math.atan2(dy, dx);
+      
+      // Rotate turret to face target
+      rotateTowerTurret(tower, angle);
+      
+      // Add firing animation
+      tower.element.classList.add('firing');
+      setTimeout(() => {
+        tower.element.classList.remove('firing');
+      }, 200);
+      
+      // Create muzzle flash particle effect at barrel tip
+      const barrelTipX = tower.x + Math.cos(angle) * 25;
+      const barrelTipY = tower.y + Math.sin(angle) * 25;
+      ParticleSystem.createMuzzleFlash(barrelTipX, barrelTipY, angle);
+      
+      // Create muzzle flash lighting effect
+      LightingSystem.createMuzzleLight(barrelTipX, barrelTipY, angle);
+      
+      // Create bullet trail effect
+      ParticleSystem.createBulletTrail(tower.x, tower.y, target.x, target.y, tower.type);
+      
+      // Special effects for artillery
+      if (tower.type === 'artillery') {
+        ParticleSystem.createArtilleryShell(tower.x, tower.y, target.x, target.y);
+        LightingSystem.createShellLight(tower.x, tower.y);
+      }
+      
       const bullet = document.createElement('div');
       bullet.className = `bullet ${tower.type}`;
       gameBoard.appendChild(bullet);
@@ -1525,6 +2557,28 @@
       
       gameState.bullets.push(bulletObj);
     }
+    
+    // Rotate tower turret to face target
+    function rotateTowerTurret(tower, angle) {
+      if (tower.turret && tower.type !== 'radar') { // Don't interrupt radar rotation
+        const degrees = (angle * 180 / Math.PI) + 90; // Convert to degrees and adjust
+        tower.turret.style.transform = `rotate(${degrees}deg)`;
+        tower.currentRotation = degrees;
+      }
+    }
+    
+    // Add idle animations to active towers
+    function updateTowerAnimations() {
+      gameState.towers.forEach(tower => {
+        // Add active class to towers with targets
+        const hasTarget = findTarget(tower) !== null;
+        if (hasTarget && !tower.element.classList.contains('active')) {
+          tower.element.classList.add('active');
+        } else if (!hasTarget && tower.element.classList.contains('active')) {
+          tower.element.classList.remove('active');
+        }
+      });
+    }
 
     function startReloading(tower) {
       tower.reloading = true;
@@ -1533,6 +2587,13 @@
     }
 
     function createExplosion(x, y, damage) {
+      // Create particle explosion effects
+      ParticleSystem.createExplosionParticles(x, y, Math.min(damage * 2, 12));
+      
+      // Create explosion lighting effect
+      const lightIntensity = Math.min(damage / 3, 2.5);
+      LightingSystem.createExplosionLight(x, y, lightIntensity);
+      
       const explosion = document.createElement('div');
       explosion.className = 'explosion';
       explosion.style.left = `${x}px`;
@@ -1629,6 +2690,9 @@
       gameState.walls.forEach(wall => wall.element.remove());
       gameState.mines.forEach(mine => mine.element.remove());
       gameState.supplyConvoys.forEach(convoy => convoy.element.remove());
+      ParticleSystem.clearAllParticles();
+      LightingSystem.clearAllLights();
+      WeatherSystem.clearWeatherEffects();
       gameState.terrainElements = [];
       
       // Reset game state
@@ -1638,7 +2702,8 @@
         towers: [], enemies: [], bullets: [], animationFrameId: null,
         score: 0, lastFrameTime: 0, frameCounter: 0, enemySpeedMultiplier: 0.4,
         walls: [], mines: [], radarCoverage: false, nextWavePreview: null, supplyConvoys: [],
-        lastConvoyTime: 0, performanceMetrics: { enemiesKilled: 0, wavesCompleted: 0, accuracy: 100, efficiency: 100 }
+        lastConvoyTime: 0, weather: { type: 'clear', intensity: 0, lastChange: 0 },
+        performanceMetrics: { enemiesKilled: 0, wavesCompleted: 0, accuracy: 100, efficiency: 100 }
       });
       
       // Reset UI
