@@ -7,7 +7,17 @@
   <style>
     body { margin: 0; padding: 0; font-family: 'Courier New', monospace; background-color: #222; color: #fff; }
     #game-container { position: relative; width: 800px; height: 500px; margin: 20px auto; overflow: hidden; box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); }
-    #game-board { position: relative; width: 100%; height: 100%; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="%233d4c2e" /><rect x="0" y="0" width="50" height="50" fill="%233a4929" opacity="0.4" /><rect x="50" y="50" width="50" height="50" fill="%233a4929" opacity="0.4" /></svg>'); }
+    #game-board { 
+      position: relative; 
+      width: 100%; 
+      height: 100%; 
+      background: 
+        /* Grass texture overlay */
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%2345523a" /><circle cx="10" cy="10" r="1" fill="%234a5740" opacity="0.6" /><circle cx="30" cy="20" r="1.5" fill="%233f4d36" opacity="0.4" /><circle cx="20" cy="35" r="1" fill="%234a5740" opacity="0.5" /><circle cx="5" cy="25" r="0.8" fill="%233a4530" opacity="0.7" /></svg>'),
+        /* Base terrain color */
+        linear-gradient(135deg, #4a5740 0%, #45523a 25%, #3f4d36 50%, #3a4530 75%, #35402a 100%);
+      background-size: 40px 40px, 100% 100%;
+    }
     
     /* Terrain elements */
     .terrain { position: absolute; pointer-events: none; }
@@ -58,8 +68,77 @@
       display: block;
     }
     
-    /* Improved path styling */
-    .path { position: absolute; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><rect width="60" height="60" fill="%238B4513" opacity="0.6" /><line x1="0" y1="20" x2="60" y2="20" stroke="%23a58d68" stroke-width="2" stroke-dasharray="5,5" /><line x1="0" y1="40" x2="60" y2="40" stroke="%23a58d68" stroke-width="2" stroke-dasharray="5,5" /></svg>'); pointer-events: none; }
+    /* Realistic road/path styling */
+    .road-segment { 
+      position: absolute; 
+      pointer-events: none; 
+      z-index: 1;
+    }
+    
+    .road-straight {
+      background: linear-gradient(90deg, 
+        #2d2d2d 0%, 
+        #3a3a3a 10%, 
+        #4a4a4a 50%, 
+        #3a3a3a 90%, 
+        #2d2d2d 100%
+      );
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    
+    .road-curved {
+      background: radial-gradient(ellipse, 
+        #4a4a4a 30%, 
+        #3a3a3a 70%, 
+        #2d2d2d 100%
+      );
+      border-radius: 20px;
+    }
+    
+    /* Road markings */
+    .road-marking {
+      position: absolute;
+      background-color: #ffffff;
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 2;
+    }
+    
+    .road-marking.center-line {
+      height: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: repeating-linear-gradient(90deg, 
+        #ffffff 0px, 
+        #ffffff 8px, 
+        transparent 8px, 
+        transparent 16px
+      );
+    }
+    
+    /* Dirt path alternative for rural areas */
+    .path-dirt { 
+      background: linear-gradient(90deg,
+        #8B7355 0%,
+        #A0845C 20%,
+        #B8956B 50%,
+        #A0845C 80%,
+        #8B7355 100%
+      );
+      border-top: 1px solid #6B5B47;
+      border-bottom: 1px solid #6B5B47;
+    }
+    
+    /* Road intersections */
+    .road-intersection {
+      background: radial-gradient(circle,
+        #4a4a4a 0%,
+        #3a3a3a 60%,
+        #2d2d2d 100%
+      );
+      border-radius: 50%;
+    }
     
     /* Keep all other styles from original game */
     #info-panel { width: 800px; margin: 0 auto; display: flex; justify-content: space-between; padding: 10px; background-color: #3a3a3a; border: 3px solid #8b7d39; border-top: none; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); }
@@ -67,7 +146,156 @@
     .tower-option { width: 60px; height: 60px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid #777; border-radius: 5px; background-color: #444; transition: all 0.2s; }
     .tower-option:hover { background-color: #555; transform: translateY(-3px); }
     .tower-option.selected { border-color: #ffcc00; box-shadow: 0 0 10px #ffcc00; }
-    .tower-icon { font-size: 24px; margin-bottom: 5px; }
+    .tower-icon { 
+      width: 24px; 
+      height: 24px; 
+      margin-bottom: 5px; 
+      position: relative;
+      border-radius: 2px;
+    }
+    
+    /* Mini Tower Icons for Selection UI */
+    .tower-icon.mg { 
+      background: linear-gradient(145deg, #5a5a5a, #3a3a3a);
+      border: 1px solid #6e6e6e;
+    }
+    .tower-icon.mg::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 2px;
+      background: #2c2c2c;
+      border-radius: 1px;
+    }
+    
+    .tower-icon.artillery { 
+      background: radial-gradient(circle, #4a7b49, #2d572c);
+      border: 1px solid #4a7b49;
+      border-radius: 50%;
+    }
+    .tower-icon.artillery::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 15px;
+      height: 2px;
+      background: #2c2c2c;
+      border-radius: 1px;
+    }
+    
+    .tower-icon.aa { 
+      background: linear-gradient(145deg, #3a6da3, #1a3e5c);
+      border: 1px solid #3a6da3;
+      border-radius: 4px;
+    }
+    .tower-icon.aa::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 8px;
+      height: 1px;
+      background: #2c2c2c;
+      border-radius: 1px;
+      box-shadow: 0 2px 0 #2c2c2c;
+    }
+    
+    .tower-icon.sniper { 
+      background: linear-gradient(45deg, #4a3a2a, #5c2b1a);
+      border: 1px solid #8a4f3b;
+      border-radius: 2px;
+    }
+    .tower-icon.sniper::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 8px;
+      height: 1px;
+      background: #2c2c2c;
+      transform: rotate(45deg);
+    }
+    .tower-icon.sniper::after {
+      content: '•';
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      color: #ffaa00;
+      font-size: 6px;
+      text-shadow: 0 0 2px #ffaa00;
+    }
+    
+    .tower-icon.engineer { 
+      background: linear-gradient(135deg, #d2691e, #8b4513);
+      border: 1px solid #d2691e;
+      border-radius: 1px;
+    }
+    .tower-icon.engineer::before {
+      content: '⚒';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 10px;
+      color: #2c2c2c;
+    }
+    
+    .tower-icon.mortar { 
+      background: radial-gradient(circle, #6a5acd, #483d8b);
+      border: 1px solid #6a5acd;
+      border-radius: 50%;
+    }
+    .tower-icon.mortar::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 2px;
+      height: 10px;
+      background: #2c2c2c;
+      border-radius: 1px;
+    }
+    
+    .tower-icon.radar { 
+      background: linear-gradient(145deg, #9370db, #4b0082);
+      border: 1px solid #9370db;
+      border-radius: 2px;
+    }
+    .tower-icon.radar::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      background: transparent;
+      border: 1px solid #2c2c2c;
+      border-radius: 50%;
+    }
+    
+    .tower-icon.command { 
+      background: linear-gradient(135deg, #9acd32, #556b2f);
+      border: 1px solid #9acd32;
+      border-radius: 2px;
+    }
+    .tower-icon.command::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      right: 2px;
+      height: 4px;
+      background: #3a3a3a;
+      border: 1px solid #5a5a5a;
+      border-radius: 1px;
+    }
     .tower-cost { font-size: 12px; font-weight: bold; color: #ffcc00; }
     .tower { 
       position: absolute; 
@@ -411,7 +639,7 @@
       z-index: 25;
     }
     /* Realistic Tower Designs */
-    .tower { position: relative; overflow: visible; }
+    /* Realistic Tower Designs - Keep absolute positioning for game placement */
     
     /* MG42 Machine Gun Nest */
     .tower.mg { 
@@ -829,8 +1057,8 @@
   <div id="instructions">
     <h2 style="margin-top: 0;">WWII Tower Defense - Procedural Maps</h2>
     <p>Select a tower, place it on strategic terrain, and defend against waves of enemies!</p>
-    <p><strong>Combat Towers:</strong> MG42 (🔫) - rapid fire vs infantry, 88mm Flak (💥) - dual-purpose AT/AA, Bofors AA (🎯) - anti-aircraft, Sniper Team (🎯) - precision anti-personnel, Mortar (🎆) - indirect fire support</p>
-    <p><strong>Support Towers:</strong> Engineers (⚒️) - build fortifications, Radar (📡) - early warning system, Command Bunker (🏗️) - coordinates all defenses</p>
+    <p><strong>Combat Towers:</strong> MG42 Machine Gun Nest - rapid fire vs infantry, 88mm Flak Gun - dual-purpose AT/AA, Bofors AA Gun - anti-aircraft, Sniper Team - precision anti-personnel, 81mm Mortar Team - indirect fire support</p>
+    <p><strong>Support Towers:</strong> Combat Engineers - build fortifications, Radar Station - early warning system, Command Bunker - coordinates all defenses</p>
     <p><strong>Strategic Elements:</strong> Hills (🏔️) +25% range, Forests (🌲) concealment, Resource nodes (💰) passive income, Supply convoys (🚛) bonus resources</p>
     <div class="difficulty-selection">
       <button class="difficulty-btn selected" data-difficulty="normal">Normal</button>
@@ -869,35 +1097,35 @@
     </div>
     <div id="tower-selection">
       <div class="tower-option" data-type="mg" onclick="selectTower('mg')">
-        <div class="tower-icon">👨‍🦯</div>
+        <div class="tower-icon mg"></div>
         <div class="tower-cost">$25</div>
       </div>
       <div class="tower-option" data-type="artillery" onclick="selectTower('artillery')">
-        <div class="tower-icon">💣</div>
+        <div class="tower-icon artillery"></div>
         <div class="tower-cost">$50</div>
       </div>
       <div class="tower-option" data-type="aa" onclick="selectTower('aa')">
-        <div class="tower-icon">⚡</div>
+        <div class="tower-icon aa"></div>
         <div class="tower-cost">$40</div>
       </div>
       <div class="tower-option" data-type="sniper" onclick="selectTower('sniper')">
-        <div class="tower-icon">🔭</div>
+        <div class="tower-icon sniper"></div>
         <div class="tower-cost">$60</div>
       </div>
       <div class="tower-option" data-type="engineer" onclick="selectTower('engineer')">
-        <div class="tower-icon">🔧</div>
+        <div class="tower-icon engineer"></div>
         <div class="tower-cost">$45</div>
       </div>
       <div class="tower-option" data-type="radar" onclick="selectTower('radar')">
-        <div class="tower-icon">📡</div>
+        <div class="tower-icon radar"></div>
         <div class="tower-cost">$35</div>
       </div>
       <div class="tower-option" data-type="mortar" onclick="selectTower('mortar')">
-        <div class="tower-icon">🎆</div>
+        <div class="tower-icon mortar"></div>
         <div class="tower-cost">$50</div>
       </div>
       <div class="tower-option" data-type="command" onclick="selectTower('command')">
-        <div class="tower-icon">🏗️</div>
+        <div class="tower-icon command"></div>
         <div class="tower-cost">$100</div>
       </div>
     </div>
@@ -2862,33 +3090,55 @@
       // Generate procedural path through the map
       generatePath(seed = this.seed) {
         const pathSegments = [];
-        const startX = 50 + this.seededRandom(seed) * 100;
-        const endX = this.width - 50;
-        const startY = this.seededRandom(seed + 1) * this.height;
         
-        // Create strategic waypoints with some randomization
+        // Create more realistic road entrance and exit points
+        const startX = 0; // Start from left edge
+        const startY = 150 + this.seededRandom(seed + 1) * 200; // Constrain to middle area
+        const endX = this.width; // End at right edge
+        const endY = 150 + this.seededRandom(seed + 8) * 200; // Constrain to middle area
+        
+        // Create more natural waypoints that follow terrain logic
         const waypoints = [
           { x: startX, y: startY },
-          { x: startX + 150 + this.seededRandom(seed + 2) * 100, y: startY + (this.seededRandom(seed + 3) - 0.5) * 200 },
-          { x: this.width * 0.5 + (this.seededRandom(seed + 4) - 0.5) * 150, y: this.height * 0.3 + this.seededRandom(seed + 5) * 200 },
-          { x: this.width * 0.7 + (this.seededRandom(seed + 6) - 0.5) * 100, y: this.height * 0.6 + (this.seededRandom(seed + 7) - 0.5) * 150 },
-          { x: endX, y: this.height * 0.4 + this.seededRandom(seed + 8) * 200 }
+          { x: 120 + this.seededRandom(seed + 2) * 80, y: startY + (this.seededRandom(seed + 3) - 0.5) * 120 },
+          { x: 280 + this.seededRandom(seed + 4) * 100, y: this.height * 0.3 + this.seededRandom(seed + 5) * 140 },
+          { x: 480 + this.seededRandom(seed + 6) * 80, y: this.height * 0.4 + this.seededRandom(seed + 7) * 120 },
+          { x: 650 + this.seededRandom(seed + 9) * 80, y: endY + (this.seededRandom(seed + 10) - 0.5) * 100 },
+          { x: endX, y: endY }
         ];
 
-        // Create curved segments between waypoints
+        // Ensure waypoints don't go too close to edges (except start/end)
+        for (let i = 1; i < waypoints.length - 1; i++) {
+          waypoints[i].x = Math.max(60, Math.min(waypoints[i].x, this.width - 60));
+          waypoints[i].y = Math.max(60, Math.min(waypoints[i].y, this.height - 60));
+        }
+
+        // Create smoother curved segments with realistic road physics
         for (let i = 0; i < waypoints.length - 1; i++) {
           const start = waypoints[i];
           const end = waypoints[i + 1];
           
-          // Generate control points for smooth curves
-          const controlOffset = 80 + this.seededRandom(seed + i + 10) * 40;
+          // Calculate natural control points for realistic road curves
+          const midX = (start.x + end.x) / 2;
+          const midY = (start.y + end.y) / 2;
+          
+          // Control offset based on distance and natural curve tendency
+          const distance = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
+          const baseOffset = Math.min(distance * 0.3, 100);
+          const randomOffset = baseOffset + this.seededRandom(seed + i + 10) * 30;
+          
+          // Perpendicular offset for more natural curves
+          const perpAngle = Math.atan2(end.y - start.y, end.x - start.x) + Math.PI / 2;
+          const offsetDirection = (this.seededRandom(seed + i + 15) - 0.5) * 2;
+          
           const control1 = {
-            x: start.x + controlOffset * (this.seededRandom(seed + i + 20) - 0.5),
-            y: start.y + controlOffset * (this.seededRandom(seed + i + 21) - 0.5)
+            x: start.x + (midX - start.x) * 0.4 + Math.cos(perpAngle) * randomOffset * 0.3 * offsetDirection,
+            y: start.y + (midY - start.y) * 0.4 + Math.sin(perpAngle) * randomOffset * 0.3 * offsetDirection
           };
+          
           const control2 = {
-            x: end.x - controlOffset * (this.seededRandom(seed + i + 22) - 0.5),
-            y: end.y - controlOffset * (this.seededRandom(seed + i + 23) - 0.5)
+            x: end.x - (end.x - midX) * 0.4 + Math.cos(perpAngle) * randomOffset * 0.3 * offsetDirection,
+            y: end.y - (end.y - midY) * 0.4 + Math.sin(perpAngle) * randomOffset * 0.3 * offsetDirection
           };
 
           pathSegments.push({
@@ -3011,20 +3261,53 @@
 
     // Generate path points for enemy movement
     let path = [];
-    const pathResolution = 10; // Points per segment
+    const pathResolution = 20; // Higher resolution for smoother movement
+
+    // Helper function to calculate Bezier curve length for adaptive resolution
+    function calculateBezierLength(points) {
+      let length = 0;
+      const samples = 10;
+      let prevPoint = points[0];
+      
+      for (let i = 1; i <= samples; i++) {
+        const t = i / samples;
+        const x = Math.pow(1-t, 3) * points[0].x + 
+                3 * Math.pow(1-t, 2) * t * points[1].x + 
+                3 * (1-t) * Math.pow(t, 2) * points[2].x + 
+                Math.pow(t, 3) * points[3].x;
+        const y = Math.pow(1-t, 3) * points[0].y + 
+                3 * Math.pow(1-t, 2) * t * points[1].y + 
+                3 * (1-t) * Math.pow(t, 2) * points[2].y + 
+                Math.pow(t, 3) * points[3].y;
+        
+        const dx = x - prevPoint.x;
+        const dy = y - prevPoint.y;
+        length += Math.sqrt(dx * dx + dy * dy);
+        prevPoint = { x, y };
+      }
+      
+      return length;
+    }
 
     function generateMapData(seed) {
       mapGenerator.seed = seed || Math.random();
       pathSegments = mapGenerator.generatePath();
       terrainFeatures = mapGenerator.generateTerrain(mapGenerator.seed, pathSegments);
       
-      // Generate path points for enemy movement
+      // Generate high-resolution path points for precise enemy movement
       path = [];
-      pathSegments.forEach(segment => {
+      pathSegments.forEach((segment, segmentIndex) => {
         if (segment.type === 'curved') {
-          // Generate points along Bezier curve
-          for (let t = 0; t <= 1; t += 1/pathResolution) {
-            const points = segment.points;
+          const points = segment.points;
+          
+          // Calculate segment length for adaptive resolution
+          const segmentLength = calculateBezierLength(points);
+          const adaptiveResolution = Math.max(pathResolution, Math.ceil(segmentLength / 8));
+          
+          // Generate points along Bezier curve with adaptive density
+          for (let i = 0; i <= adaptiveResolution; i++) {
+            const t = i / adaptiveResolution;
+            
             // Cubic Bezier formula
             const x = Math.pow(1-t, 3) * points[0].x + 
                     3 * Math.pow(1-t, 2) * t * points[1].x + 
@@ -3034,7 +3317,13 @@
                     3 * Math.pow(1-t, 2) * t * points[1].y + 
                     3 * (1-t) * Math.pow(t, 2) * points[2].y + 
                     Math.pow(t, 3) * points[3].y;
-            path.push({ x, y });
+            
+            // Skip duplicate points between segments
+            if (path.length === 0 || 
+                Math.abs(path[path.length - 1].x - x) > 2 || 
+                Math.abs(path[path.length - 1].y - y) > 2) {
+              path.push({ x, y });
+            }
           }
         }
       });
@@ -3218,28 +3507,89 @@
 
     // Create path visualization
     function createPathVisualization() {
-      // Create path segments
-      pathSegments.forEach((segment, i) => {
-        if (segment.type === 'curved') {
-          const points = segment.points;
-          // Create path element for this segment
-          const pathElement = document.createElement('div');
-          pathElement.className = 'path';
-          
-          // Set path dimensions and position based on the points
-          const startX = Math.min(...points.map(p => p.x));
-          const startY = Math.min(...points.map(p => p.y));
-          const endX = Math.max(...points.map(p => p.x));
-          const endY = Math.max(...points.map(p => p.y));
-          
-          pathElement.style.left = `${startX - 30}px`;
-          pathElement.style.top = `${startY}px`;
-          pathElement.style.width = `${endX - startX + 60}px`;
-          pathElement.style.height = `${endY - startY + 60}px`;
-          
-          gameBoard.appendChild(pathElement);
+      // Create realistic road segments with proper width and styling
+      const roadWidth = 32;
+      
+      for (let i = 0; i < path.length - 1; i++) {
+        const currentPoint = path[i];
+        const nextPoint = path[i + 1];
+        
+        // Calculate segment properties
+        const dx = nextPoint.x - currentPoint.x;
+        const dy = nextPoint.y - currentPoint.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx);
+        
+        // Skip very short segments to avoid visual artifacts
+        if (distance < 5) continue;
+        
+        // Create road segment
+        const roadSegment = document.createElement('div');
+        roadSegment.className = 'road-segment';
+        
+        // Determine if this is a straight or curved section
+        const isCurved = (i > 0 && i < path.length - 2) && 
+                        Math.abs(angle - Math.atan2(path[i+2].y - nextPoint.y, path[i+2].x - nextPoint.x)) > 0.3;
+        
+        if (isCurved) {
+          roadSegment.classList.add('road-curved');
+          roadSegment.style.width = `${Math.max(distance, roadWidth)}px`;
+          roadSegment.style.height = `${roadWidth + 8}px`;
+        } else {
+          roadSegment.classList.add('road-straight');
+          roadSegment.style.width = `${distance}px`;
+          roadSegment.style.height = `${roadWidth}px`;
         }
-      });
+        
+        // Position and rotate the segment
+        roadSegment.style.left = `${currentPoint.x}px`;
+        roadSegment.style.top = `${currentPoint.y - roadWidth/2}px`;
+        roadSegment.style.transformOrigin = '0 50%';
+        roadSegment.style.transform = `rotate(${angle}rad)`;
+        
+        gameBoard.appendChild(roadSegment);
+        
+        // Add center line markings for straight segments
+        if (!isCurved && distance > 40) {
+          const centerLine = document.createElement('div');
+          centerLine.className = 'road-marking center-line';
+          centerLine.style.width = `${distance - 20}px`;
+          centerLine.style.left = `${currentPoint.x + 10}px`;
+          centerLine.style.top = `${currentPoint.y}px`;
+          centerLine.style.transformOrigin = '0 50%';
+          centerLine.style.transform = `rotate(${angle}rad)`;
+          gameBoard.appendChild(centerLine);
+        }
+      }
+      
+      // Add intersection markers at significant turns
+      this.createIntersectionMarkers();
+    }
+    
+    function createIntersectionMarkers() {
+      const intersectionRadius = 20;
+      
+      for (let i = 1; i < path.length - 1; i++) {
+        const prevPoint = path[i - 1];
+        const currentPoint = path[i];
+        const nextPoint = path[i + 1];
+        
+        // Calculate angle change at this point
+        const angle1 = Math.atan2(currentPoint.y - prevPoint.y, currentPoint.x - prevPoint.x);
+        const angle2 = Math.atan2(nextPoint.y - currentPoint.y, nextPoint.x - currentPoint.x);
+        const angleDiff = Math.abs(angle2 - angle1);
+        
+        // Create intersection marker for significant turns
+        if (angleDiff > 0.5 && angleDiff < Math.PI * 1.5) {
+          const intersection = document.createElement('div');
+          intersection.className = 'road-segment road-intersection';
+          intersection.style.width = `${intersectionRadius * 2}px`;
+          intersection.style.height = `${intersectionRadius * 2}px`;
+          intersection.style.left = `${currentPoint.x - intersectionRadius}px`;
+          intersection.style.top = `${currentPoint.y - intersectionRadius}px`;
+          gameBoard.appendChild(intersection);
+        }
+      }
     }
 
     // Add procedurally generated terrain elements
@@ -3317,13 +3667,26 @@
         });
       });
       
-      // Event listener for tower placement
+      // Event listener for tower placement with improved accuracy
       gameBoard.addEventListener('click', function(event) {
         if (gameState.selectedTowerType) {
+          // Only process clicks that didn't originate from interactive elements
+          if (event.target.classList.contains('tower') || 
+              event.target.classList.contains('enemy') ||
+              event.target.closest('.tower') ||
+              event.target.closest('.action-buttons')) {
+            return;
+          }
+          
           const rect = gameBoard.getBoundingClientRect();
+          // Use precise floating point coordinates then round for placement
           const x = event.clientX - rect.left;
           const y = event.clientY - rect.top;
-          placeTower(x, y);
+          
+          // Ensure coordinates are within game board bounds
+          if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+            placeTower(Math.round(x), Math.round(y));
+          }
         }
       });
     }
@@ -3405,28 +3768,58 @@
           aiState.behavior === 'retreating'
         );
         
-        // If not under AI control, use normal path movement
+        // If not under AI control, use precise road following
         if (!isAIControlled) {
-          // Calculate movement along path
-          const speedFactor = enemy.speed * (deltaTime / 16) * gameState.enemySpeedMultiplier;
+          // Calculate movement along path with higher precision
+          const baseSpeed = enemy.speed * (deltaTime / 16) * gameState.enemySpeedMultiplier;
+          
+          // Adjust speed based on road conditions - slower on curves
+          let speedModifier = 1.0;
+          if (enemy.pathIndex > 0 && enemy.pathIndex < path.length - 2) {
+            const prevPoint = path[enemy.pathIndex - 1];
+            const currentPoint = path[enemy.pathIndex];
+            const nextPoint = path[enemy.pathIndex + 1];
+            
+            // Calculate curve sharpness
+            const angle1 = Math.atan2(currentPoint.y - prevPoint.y, currentPoint.x - prevPoint.x);
+            const angle2 = Math.atan2(nextPoint.y - currentPoint.y, nextPoint.x - currentPoint.x);
+            const curvature = Math.abs(angle2 - angle1);
+            
+            // Reduce speed on sharp turns for realistic movement
+            if (curvature > 0.5) {
+              speedModifier = 0.7;
+            } else if (curvature > 0.3) {
+              speedModifier = 0.85;
+            }
+          }
+          
+          const speedFactor = baseSpeed * speedModifier;
           enemy.pathProgress += speedFactor;
           
+          // Advance to next path segment when ready
           while (enemy.pathProgress >= 1 && enemy.pathIndex < path.length - 1) {
             enemy.pathProgress -= 1;
             enemy.pathIndex++;
           }
           
-          // Interpolate position between current and next path point
+          // High-precision interpolation between path points
           const currentPoint = path[enemy.pathIndex];
           const nextIndex = Math.min(enemy.pathIndex + 1, path.length - 1);
           const nextPoint = path[nextIndex];
           
+          // Smooth interpolation with road following
           enemy.x = currentPoint.x + (nextPoint.x - currentPoint.x) * enemy.pathProgress;
           enemy.y = currentPoint.y + (nextPoint.y - currentPoint.y) * enemy.pathProgress;
           
-          // Update visual position
-          enemy.element.style.left = `${enemy.x - enemy.element.offsetWidth/2}px`;
-          enemy.element.style.top = `${enemy.y - enemy.element.offsetHeight/2}px`;
+          // Calculate rotation based on movement direction for realistic orientation
+          if (nextPoint.x !== currentPoint.x || nextPoint.y !== currentPoint.y) {
+            const angle = Math.atan2(nextPoint.y - currentPoint.y, nextPoint.x - currentPoint.x);
+            enemy.element.style.transform = `rotate(${angle}rad)`;
+          }
+          
+          // Update visual position with pixel-perfect placement
+          enemy.element.style.left = `${Math.round(enemy.x - enemy.element.offsetWidth/2)}px`;
+          enemy.element.style.top = `${Math.round(enemy.y - enemy.element.offsetHeight/2)}px`;
         }
         // AI-controlled movement is handled in the EnemyAI system
       });
@@ -4545,7 +4938,7 @@
       gameState.terrainElements = [];
       
       // Clear existing path visualization
-      document.querySelectorAll('.path').forEach(path => path.remove());
+      document.querySelectorAll('.road-segment, .road-marking').forEach(road => road.remove());
       
       // Generate new map
       generateMapData();
