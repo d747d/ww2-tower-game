@@ -2328,29 +2328,34 @@
             break;
         }
         
-        // Add health bar
-        const healthBar = document.createElement('div');
-        healthBar.className = 'terrain-health-bar';
-        healthBar.style.position = 'absolute';
-        healthBar.style.width = '100%';
-        healthBar.style.height = '4px';
-        healthBar.style.backgroundColor = '#333';
-        healthBar.style.bottom = '-6px';
-        healthBar.style.left = '0';
-        healthBar.style.borderRadius = '2px';
-        healthBar.style.overflow = 'hidden';
+        // Only add health bars to military/strategic targets, not environmental objects
+        const shouldHaveHealthBar = destructible.type === 'bunker'; // Only bunkers get health bars
         
-        const healthFill = document.createElement('div');
-        healthFill.className = 'terrain-health-fill';
-        healthFill.style.height = '100%';
-        healthFill.style.backgroundColor = '#32cd32';
-        healthFill.style.width = '100%';
-        healthFill.style.transition = 'width 0.2s';
-        healthBar.appendChild(healthFill);
-        element.appendChild(healthBar);
+        if (shouldHaveHealthBar) {
+          const healthBar = document.createElement('div');
+          healthBar.className = 'terrain-health-bar';
+          healthBar.style.position = 'absolute';
+          healthBar.style.width = '100%';
+          healthBar.style.height = '4px';
+          healthBar.style.backgroundColor = '#333';
+          healthBar.style.bottom = '-6px';
+          healthBar.style.left = '0';
+          healthBar.style.borderRadius = '2px';
+          healthBar.style.overflow = 'hidden';
+          
+          const healthFill = document.createElement('div');
+          healthFill.className = 'terrain-health-fill';
+          healthFill.style.height = '100%';
+          healthFill.style.backgroundColor = '#32cd32';
+          healthFill.style.width = '100%';
+          healthFill.style.transition = 'width 0.2s';
+          healthBar.appendChild(healthFill);
+          element.appendChild(healthBar);
+          
+          destructible.healthFill = healthFill;
+        }
         
         destructible.element = element;
-        destructible.healthFill = healthFill;
         gameBoard.appendChild(element);
         
         // Add click handler for manual destruction (testing)
@@ -2393,17 +2398,19 @@
         
         terrain.health -= damage;
         
-        // Update health bar
-        const healthPercentage = Math.max(0, terrain.health / terrain.maxHealth);
-        terrain.healthFill.style.width = `${healthPercentage * 100}%`;
-        
-        // Change color as health decreases
-        if (healthPercentage > 0.6) {
-          terrain.healthFill.style.backgroundColor = '#32cd32'; // Green
-        } else if (healthPercentage > 0.3) {
-          terrain.healthFill.style.backgroundColor = '#ffa500'; // Orange
-        } else {
-          terrain.healthFill.style.backgroundColor = '#ff4500'; // Red
+        // Update health bar only if it exists
+        if (terrain.healthFill) {
+          const healthPercentage = Math.max(0, terrain.health / terrain.maxHealth);
+          terrain.healthFill.style.width = `${healthPercentage * 100}%`;
+          
+          // Change color as health decreases
+          if (healthPercentage > 0.6) {
+            terrain.healthFill.style.backgroundColor = '#32cd32'; // Green
+          } else if (healthPercentage > 0.3) {
+            terrain.healthFill.style.backgroundColor = '#ffa500'; // Orange
+          } else {
+            terrain.healthFill.style.backgroundColor = '#ff4500'; // Red
+          }
         }
         
         // Add damage effect
