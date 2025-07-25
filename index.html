@@ -140,6 +140,241 @@
       border-radius: 50%;
     }
     
+    /* Realistic Forest System */
+    .forest-area {
+      position: absolute;
+      pointer-events: none;
+      z-index: 3;
+    }
+    
+    .tree {
+      position: absolute;
+      pointer-events: auto;
+      cursor: crosshair;
+      transition: transform 0.2s ease;
+    }
+    
+    .tree:hover {
+      transform: scale(1.1);
+    }
+    
+    .tree.pine {
+      width: 25px;
+      height: 35px;
+      background: linear-gradient(180deg, #2d4a2d 0%, #1a3d1a 50%, #4a2a1a 100%);
+      clip-path: polygon(50% 0%, 20% 40%, 30% 40%, 10% 80%, 40% 80%, 40% 100%, 60% 100%, 60% 80%, 90% 80%, 70% 40%, 80% 40%);
+    }
+    
+    .tree.oak {
+      width: 30px;
+      height: 32px;
+      background: radial-gradient(circle at center 70%, #3d5a3d 0%, #2d4a2d 60%, #4a2a1a 100%);
+      border-radius: 50% 50% 30% 30%;
+      position: relative;
+    }
+    
+    .tree.oak::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 8px;
+      background: #4a2a1a;
+      border-radius: 2px;
+    }
+    
+    .tree.birch {
+      width: 20px;
+      height: 30px;
+      background: linear-gradient(180deg, #4a6a4a 0%, #3a5a3a 40%, #f0f0f0 40%, #e0e0e0 100%);
+      border-radius: 60% 60% 30% 30%;
+      position: relative;
+    }
+    
+    .tree.birch::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 6px;
+      background: #f0f0f0;
+      border-radius: 2px;
+    }
+    
+    /* Realistic House System */
+    .town-area {
+      position: absolute;
+      pointer-events: none;
+      z-index: 4;
+    }
+    
+    .house {
+      position: absolute;
+      pointer-events: auto;
+      cursor: crosshair;
+      transition: all 0.2s ease;
+    }
+    
+    .house:hover {
+      transform: scale(1.05);
+      filter: brightness(1.1);
+    }
+    
+    /* Farmhouse */
+    .house.farmhouse {
+      width: 40px;
+      height: 35px;
+      background: linear-gradient(180deg, #8B4513 0%, #8B4513 60%, #DEB887 60%, #D2B48C 100%);
+      position: relative;
+    }
+    
+    .house.farmhouse::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: -3px;
+      width: 46px;
+      height: 20px;
+      background: linear-gradient(45deg, #A0522D 0%, #8B4513 50%, #654321 100%);
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    }
+    
+    .house.farmhouse::after {
+      content: '';
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      width: 8px;
+      height: 12px;
+      background: #654321;
+      border: 1px solid #4a2a1a;
+    }
+    
+    /* Village House */
+    .house.village {
+      width: 35px;
+      height: 30px;
+      background: linear-gradient(180deg, #CD853F 0%, #CD853F 65%, #F5DEB3 65%, #F5DEB3 100%);
+      position: relative;
+    }
+    
+    .house.village::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -2px;
+      width: 39px;
+      height: 16px;
+      background: linear-gradient(45deg, #B22222 0%, #DC143C 50%, #8B0000 100%);
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    }
+    
+    .house.village::after {
+      content: '';
+      position: absolute;
+      bottom: 6px;
+      left: 6px;
+      width: 6px;
+      height: 10px;
+      background: #8B4513;
+      border: 1px solid #654321;
+    }
+    
+    /* Stone House */
+    .house.stone {
+      width: 45px;
+      height: 32px;
+      background: linear-gradient(180deg, #708090 0%, #708090 70%, #C0C0C0 70%, #BEBEBE 100%);
+      position: relative;
+    }
+    
+    .house.stone::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: -1px;
+      width: 47px;
+      height: 14px;
+      background: linear-gradient(45deg, #2F4F4F 0%, #708090 50%, #556B2F 100%);
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    }
+    
+    .house.stone::after {
+      content: '';
+      position: absolute;
+      bottom: 8px;
+      left: 10px;
+      width: 10px;
+      height: 12px;
+      background: #696969;
+      border: 1px solid #2F4F4F;
+    }
+    
+    /* Cottage */
+    .house.cottage {
+      width: 32px;
+      height: 28px;
+      background: linear-gradient(180deg, #DEB887 0%, #DEB887 60%, #F5F5DC 60%, #F5F5DC 100%);
+      border-radius: 8px 8px 4px 4px;
+      position: relative;
+    }
+    
+    .house.cottage::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: -1px;
+      width: 34px;
+      height: 12px;
+      background: linear-gradient(45deg, #8B4513 0%, #A0522D 50%, #654321 100%);
+      border-radius: 50% 50% 0% 0%;
+    }
+    
+    .house.cottage::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 5px;
+      width: 5px;
+      height: 8px;
+      background: #8B4513;
+      border-radius: 2px;
+    }
+    
+    /* Manor House */
+    .house.manor {
+      width: 55px;
+      height: 40px;
+      background: linear-gradient(180deg, #F5DEB3 0%, #F5DEB3 75%, #DEB887 75%, #DEB887 100%);
+      position: relative;
+    }
+    
+    .house.manor::before {
+      content: '';
+      position: absolute;
+      top: -15px;
+      left: -3px;
+      width: 61px;
+      height: 25px;
+      background: linear-gradient(45deg, #8B0000 0%, #B22222 50%, #654321 100%);
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    }
+    
+    .house.manor::after {
+      content: '';
+      position: absolute;
+      bottom: 10px;
+      left: 15px;
+      width: 12px;
+      height: 15px;
+      background: #8B4513;
+      border: 2px solid #654321;
+    }
+    
     /* Keep all other styles from original game */
     #info-panel { width: 800px; margin: 0 auto; display: flex; justify-content: space-between; padding: 10px; background-color: #3a3a3a; border: 3px solid #8b7d39; border-top: none; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); }
     #tower-selection { display: flex; gap: 10px; }
@@ -1151,6 +1386,7 @@
       coverSpots: [], enemyGroups: [], lastAIUpdate: 0,
       destructibleTerrain: [], craters: [], modifiedPaths: [],
       supplyTrucks: [], ammoDepots: [], lastSupplySpawn: 0,
+      forests: [], towns: [],
       performanceMetrics: {
         enemiesKilled: 0, wavesCompleted: 0, accuracy: 100, efficiency: 100
       }
@@ -1672,6 +1908,337 @@
       
       static updateWeatherEffects() {
         // Update any dynamic weather effects here if needed
+      }
+    }
+
+    // Realistic Forest System
+    class ForestSystem {
+      static createForest(x, y, radius, density = 0.7) {
+        const forestArea = document.createElement('div');
+        forestArea.className = 'forest-area';
+        forestArea.style.left = `${x - radius}px`;
+        forestArea.style.top = `${y - radius}px`;
+        forestArea.style.width = `${radius * 2}px`;
+        forestArea.style.height = `${radius * 2}px`;
+        
+        const trees = [];
+        const numTrees = Math.floor(radius * density);
+        const treeTypes = ['pine', 'oak', 'birch'];
+        
+        for (let i = 0; i < numTrees; i++) {
+          // Generate random position within forest area
+          const angle = Math.random() * Math.PI * 2;
+          const distance = Math.random() * (radius - 20);
+          const treeX = radius + Math.cos(angle) * distance;
+          const treeY = radius + Math.sin(angle) * distance;
+          
+          const tree = document.createElement('div');
+          const treeType = treeTypes[Math.floor(Math.random() * treeTypes.length)];
+          tree.className = `tree ${treeType}`;
+          tree.style.left = `${treeX - 15}px`;
+          tree.style.top = `${treeY - 15}px`;
+          
+          // Make trees destructible
+          const treeData = {
+            id: Math.random().toString(36).substr(2, 9),
+            x: x - radius + treeX,
+            y: y - radius + treeY,
+            health: 15 + Math.random() * 10,
+            maxHealth: 25,
+            type: 'tree',
+            subtype: treeType,
+            element: tree,
+            destroyed: false,
+            radius: 12
+          };
+          
+          tree.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.damageTree(treeData, 25); // One-shot destruction for testing
+          });
+          
+          trees.push(treeData);
+          forestArea.appendChild(tree);
+        }
+        
+        gameBoard.appendChild(forestArea);
+        
+        return {
+          element: forestArea,
+          trees: trees,
+          x: x,
+          y: y,
+          radius: radius
+        };
+      }
+      
+      static damageTree(treeData, damage) {
+        if (treeData.destroyed) return;
+        
+        treeData.health -= damage;
+        
+        // Add damage effect
+        treeData.element.style.filter = 'brightness(1.5) sepia(0.3)';
+        setTimeout(() => {
+          if (treeData.element) {
+            treeData.element.style.filter = 'brightness(1)';
+          }
+        }, 200);
+        
+        if (treeData.health <= 0) {
+          this.destroyTree(treeData);
+        }
+      }
+      
+      static destroyTree(treeData) {
+        treeData.destroyed = true;
+        
+        // Create destruction animation
+        treeData.element.style.transition = 'all 0.8s ease';
+        treeData.element.style.transform = 'rotate(45deg) scale(0.5)';
+        treeData.element.style.opacity = '0.3';
+        treeData.element.style.filter = 'sepia(1) hue-rotate(30deg)';
+        
+        setTimeout(() => {
+          if (treeData.element && treeData.element.parentNode) {
+            treeData.element.remove();
+          }
+        }, 800);
+        
+        // Add debris effect
+        this.createDebris(treeData.x, treeData.y);
+      }
+      
+      static createDebris(x, y) {
+        for (let i = 0; i < 3; i++) {
+          const debris = document.createElement('div');
+          debris.style.position = 'absolute';
+          debris.style.width = '8px';
+          debris.style.height = '8px';
+          debris.style.backgroundColor = '#8B4513';
+          debris.style.borderRadius = '2px';
+          debris.style.left = `${x + (Math.random() - 0.5) * 20}px`;
+          debris.style.top = `${y + (Math.random() - 0.5) * 20}px`;
+          debris.style.zIndex = '2';
+          debris.style.opacity = '0.8';
+          
+          gameBoard.appendChild(debris);
+          
+          setTimeout(() => debris.remove(), 5000);
+        }
+      }
+      
+      static checkExplosionDamage(x, y, damage, radius) {
+        const trees = document.querySelectorAll('.tree');
+        trees.forEach(tree => {
+          const treeX = parseInt(tree.style.left);
+          const treeY = parseInt(tree.style.top);
+          const dx = treeX - x;
+          const dy = treeY - y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance <= radius) {
+            const damageMultiplier = 1 - (distance / radius);
+            const explosionDamage = Math.round(damage * damageMultiplier);
+            
+            if (explosionDamage >= 2) {
+              this.destroyTree(tree);
+            }
+          }
+        });
+      }
+      
+      static destroyTree(tree) {
+        // Add destruction effect
+        tree.style.transform = 'scale(0.8) rotate(15deg)';
+        tree.style.opacity = '0.5';
+        tree.style.filter = 'sepia(100%) saturate(200%) hue-rotate(30deg)';
+        
+        // Create debris
+        const debris = document.createElement('div');
+        debris.className = 'debris';
+        debris.style.position = 'absolute';
+        debris.style.width = '8px';
+        debris.style.height = '8px';
+        debris.style.background = '#8B4513';
+        debris.style.left = tree.style.left;
+        debris.style.top = tree.style.top;
+        debris.style.zIndex = '2';
+        
+        gameBoard.appendChild(debris);
+        
+        setTimeout(() => {
+          tree.remove();
+          debris.remove();
+        }, 2000);
+      }
+    }
+
+    // Realistic Town System
+    class TownSystem {
+      static createTown(centerX, centerY, houseCount = 8) {
+        const townArea = document.createElement('div');
+        townArea.className = 'town-area';
+        townArea.style.left = `${centerX - 100}px`;
+        townArea.style.top = `${centerY - 60}px`;
+        townArea.style.width = '200px';
+        townArea.style.height = '120px';
+        
+        const houses = [];
+        const houseTypes = ['farmhouse', 'village', 'stone', 'cottage', 'manor'];
+        
+        // Create houses in a realistic town layout
+        for (let i = 0; i < houseCount; i++) {
+          const houseType = houseTypes[Math.floor(Math.random() * houseTypes.length)];
+          
+          // Position houses in rows along the road
+          const row = Math.floor(i / 4);
+          const col = i % 4;
+          const houseX = 20 + col * 40 + (Math.random() - 0.5) * 15;
+          const houseY = 20 + row * 50 + (Math.random() - 0.5) * 10;
+          
+          const house = document.createElement('div');
+          house.className = `house ${houseType}`;
+          house.style.left = `${houseX}px`;
+          house.style.top = `${houseY}px`;
+          
+          // Add some variation in rotation
+          const rotation = (Math.random() - 0.5) * 10; // -5 to 5 degrees
+          house.style.transform = `rotate(${rotation}deg)`;
+          
+          // Make houses destructible
+          const houseData = {
+            id: Math.random().toString(36).substr(2, 9),
+            x: centerX - 100 + houseX,
+            y: centerY - 60 + houseY,
+            health: 30 + Math.random() * 20,
+            maxHealth: 50,
+            type: 'house',
+            subtype: houseType,
+            element: house,
+            destroyed: false,
+            radius: 20
+          };
+          
+          house.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.damageHouse(houseData, 50); // One-shot destruction for testing
+          });
+          
+          houses.push(houseData);
+          townArea.appendChild(house);
+        }
+        
+        gameBoard.appendChild(townArea);
+        
+        return {
+          element: townArea,
+          houses: houses,
+          x: centerX,
+          y: centerY
+        };
+      }
+      
+      static damageHouse(houseData, damage) {
+        if (houseData.destroyed) return;
+        
+        houseData.health -= damage;
+        
+        // Add damage effect
+        houseData.element.style.filter = 'brightness(1.3) contrast(1.2)';
+        setTimeout(() => {
+          if (houseData.element) {
+            houseData.element.style.filter = 'brightness(1)';
+          }
+        }, 300);
+        
+        if (houseData.health <= 0) {
+          this.destroyHouse(houseData);
+        }
+      }
+      
+      static destroyHouse(houseData) {
+        houseData.destroyed = true;
+        
+        // Create destruction animation
+        houseData.element.style.transition = 'all 1.2s ease';
+        houseData.element.style.transform += ' scale(0.3)';
+        houseData.element.style.opacity = '0.2';
+        houseData.element.style.filter = 'sepia(1) brightness(0.5)';
+        
+        setTimeout(() => {
+          if (houseData.element && houseData.element.parentNode) {
+            houseData.element.remove();
+          }
+        }, 1200);
+        
+        // Add rubble effect
+        this.createRubble(houseData.x, houseData.y);
+      }
+      
+      static createRubble(x, y) {
+        for (let i = 0; i < 5; i++) {
+          const rubble = document.createElement('div');
+          rubble.style.position = 'absolute';
+          rubble.style.width = `${4 + Math.random() * 8}px`;
+          rubble.style.height = `${4 + Math.random() * 8}px`;
+          rubble.style.backgroundColor = Math.random() > 0.5 ? '#708090' : '#8B4513';
+          rubble.style.borderRadius = '2px';
+          rubble.style.left = `${x + (Math.random() - 0.5) * 30}px`;
+          rubble.style.top = `${y + (Math.random() - 0.5) * 30}px`;
+          rubble.style.zIndex = '2';
+          rubble.style.opacity = '0.7';
+          
+          gameBoard.appendChild(rubble);
+          
+          setTimeout(() => rubble.remove(), 8000);
+        }
+      }
+      
+      static checkExplosionDamage(x, y, damage, radius) {
+        const houses = document.querySelectorAll('.house');
+        houses.forEach(house => {
+          const houseX = parseInt(house.style.left);
+          const houseY = parseInt(house.style.top);
+          const dx = houseX - x;
+          const dy = houseY - y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance <= radius) {
+            const damageMultiplier = 1 - (distance / radius);
+            const explosionDamage = Math.round(damage * damageMultiplier);
+            
+            if (explosionDamage >= 3) {
+              this.destroyHouse(house);
+            }
+          }
+        });
+      }
+      
+      static destroyHouse(house) {
+        // Add destruction effect
+        house.style.transform = 'scale(0.9) rotate(-5deg)';
+        house.style.opacity = '0.6';
+        house.style.filter = 'saturate(0%) brightness(0.7)';
+        
+        // Create rubble
+        const rubble = document.createElement('div');
+        rubble.className = 'rubble';
+        rubble.style.position = 'absolute';
+        rubble.style.width = '15px';
+        rubble.style.height = '10px';
+        rubble.style.background = '#8B4513';
+        rubble.style.left = house.style.left;
+        rubble.style.top = house.style.top;
+        rubble.style.zIndex = '2';
+        rubble.style.borderRadius = '2px';
+        
+        gameBoard.appendChild(rubble);
+        
+        setTimeout(() => {
+          house.remove();
+          rubble.remove();
+        }, 3000);
       }
     }
 
@@ -3601,48 +4168,152 @@
 
     // Add procedurally generated terrain elements
     function addTerrainElements() {
-      // Clear existing terrain
+      // Clear existing terrain, forests, and towns
       gameState.terrainElements.forEach(element => element.remove());
       gameState.terrainElements = [];
       
-      // Add generated strategic terrain
-      terrainFeatures.forEach(feature => {
-        const terrainElement = document.createElement('div');
-        terrainElement.className = `terrain ${feature.type}`;
-        terrainElement.textContent = feature.icon;
-        terrainElement.style.left = `${feature.x - feature.radius/2}px`;
-        terrainElement.style.top = `${feature.y - feature.radius/2}px`;
-        terrainElement.style.width = `${feature.radius}px`;
-        terrainElement.style.height = `${feature.radius}px`;
-        terrainElement.style.fontSize = feature.type === 'decoration' ? '20px' : '24px';
-        terrainElement.style.display = 'flex';
-        terrainElement.style.alignItems = 'center';
-        terrainElement.style.justifyContent = 'center';
-        
-        // Add bonus indicator for strategic terrain
-        if (feature.bonus) {
-          const bonusIndicator = document.createElement('div');
-          bonusIndicator.className = 'terrain-bonus';
-          if (feature.bonus === 'range') {
-            bonusIndicator.textContent = '+RNG';
-          } else if (feature.bonus === 'concealment') {
-            bonusIndicator.textContent = '+CON';
-          } else if (feature.bonus === 'income') {
-            bonusIndicator.textContent = '+$$$';
-          }
-          terrainElement.appendChild(bonusIndicator);
-          
-          // Store terrain data for tower bonuses
-          terrainElement.terrainData = feature;
-          
-          // Add lighting effects for resource nodes
-          if (feature.bonus === 'income') {
-            LightingSystem.addResourceGlow(terrainElement, feature.x, feature.y);
-          }
+      // Clear existing forests
+      gameState.forests.forEach(forest => {
+        if (forest.element && forest.element.parentNode) {
+          forest.element.remove();
         }
+      });
+      gameState.forests = [];
+      
+      // Clear existing towns
+      gameState.towns.forEach(town => {
+        if (town.element && town.element.parentNode) {
+          town.element.remove();
+        }
+      });
+      gameState.towns = [];
+      
+      // Create realistic forests along the map
+      createRealisticForests();
+      
+      // Create towns along the road
+      createTownsAlongRoad();
+      
+      // Add remaining strategic terrain (hills, resource nodes) without colored boxes
+      terrainFeatures.forEach(feature => {
+        if (feature.type === 'hill' || feature.type === 'resource') {
+          const terrainElement = document.createElement('div');
+          terrainElement.className = `terrain ${feature.type}`;
+          
+          // Remove colored boxes - use subtle visual indicators instead
+          terrainElement.style.position = 'absolute';
+          terrainElement.style.left = `${feature.x - feature.radius/2}px`;
+          terrainElement.style.top = `${feature.y - feature.radius/2}px`;
+          terrainElement.style.width = `${feature.radius}px`;
+          terrainElement.style.height = `${feature.radius}px`;
+          terrainElement.style.pointerEvents = 'none';
+          terrainElement.style.zIndex = '1';
+          
+          if (feature.type === 'hill') {
+            // Subtle hill indication without colored box
+            terrainElement.style.background = 'radial-gradient(circle, rgba(139, 125, 57, 0.15) 0%, transparent 70%)';
+            terrainElement.style.borderRadius = '50%';
+          } else if (feature.type === 'resource') {
+            // Subtle resource node indication
+            terrainElement.style.background = 'radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 60%)';
+            terrainElement.style.borderRadius = '50%';
+            terrainElement.style.animation = 'resourcePulse 3s infinite';
+          }
+          
+          // Add bonus indicator for strategic terrain
+          if (feature.bonus) {
+            const bonusIndicator = document.createElement('div');
+            bonusIndicator.className = 'terrain-bonus';
+            bonusIndicator.style.display = 'none'; // Hidden by default, shown on hover
+            
+            if (feature.bonus === 'range') {
+              bonusIndicator.textContent = '+25% Range';
+            } else if (feature.bonus === 'income') {
+              bonusIndicator.textContent = '+$ Income';
+            }
+            
+            terrainElement.appendChild(bonusIndicator);
+            
+            // Show bonus on hover
+            terrainElement.addEventListener('mouseenter', () => {
+              bonusIndicator.style.display = 'block';
+            });
+            terrainElement.addEventListener('mouseleave', () => {
+              bonusIndicator.style.display = 'none';
+            });
+            
+            // Store terrain data for tower bonuses
+            terrainElement.terrainData = feature;
+            
+            // Add lighting effects for resource nodes
+            if (feature.bonus === 'income') {
+              LightingSystem.addResourceGlow(terrainElement, feature.x, feature.y);
+            }
+          }
+          
+          gameBoard.appendChild(terrainElement);
+          gameState.terrainElements.push(terrainElement);
+        }
+      });
+    }
+    
+    function createRealisticForests() {
+      // Create 2-3 forest areas away from the path
+      const numForests = 2 + Math.floor(Math.random() * 2);
+      
+      for (let i = 0; i < numForests; i++) {
+        let forestX, forestY;
+        let attempts = 0;
+        const maxAttempts = 20;
         
-        gameBoard.appendChild(terrainElement);
-        gameState.terrainElements.push(terrainElement);
+        // Find a good location away from the path
+        do {
+          forestX = 100 + Math.random() * 600;
+          forestY = 80 + Math.random() * 340;
+          attempts++;
+        } while (attempts < maxAttempts && isNearPath(forestX, forestY, 80));
+        
+        if (attempts < maxAttempts) {
+          const forestRadius = 60 + Math.random() * 40;
+          const forest = ForestSystem.createForest(forestX, forestY, forestRadius, 0.8);
+          gameState.forests.push(forest);
+        }
+      }
+    }
+    
+    function createTownsAlongRoad() {
+      // Create 1-2 towns positioned near the road but not blocking it
+      const numTowns = 1 + Math.floor(Math.random() * 2);
+      
+      for (let i = 0; i < numTowns; i++) {
+        // Find a good location near the middle section of the path
+        const pathIndex = Math.floor(path.length * (0.3 + i * 0.4)); // 30% and 70% along path
+        if (pathIndex < path.length) {
+          const roadPoint = path[pathIndex];
+          
+          // Offset the town from the road
+          const offsetDistance = 80 + Math.random() * 40;
+          const offsetAngle = Math.random() * Math.PI * 2;
+          
+          const townX = roadPoint.x + Math.cos(offsetAngle) * offsetDistance;
+          const townY = roadPoint.y + Math.sin(offsetAngle) * offsetDistance;
+          
+          // Ensure town is within map bounds
+          const boundedX = Math.max(120, Math.min(townX, 680));
+          const boundedY = Math.max(80, Math.min(townY, 420));
+          
+          const houseCount = 6 + Math.floor(Math.random() * 4);
+          const town = TownSystem.createTown(boundedX, boundedY, houseCount);
+          gameState.towns.push(town);
+        }
+      }
+    }
+    
+    function isNearPath(x, y, minDistance) {
+      return path.some(point => {
+        const dx = point.x - x;
+        const dy = point.y - y;
+        return Math.sqrt(dx * dx + dy * dy) < minDistance;
       });
     }
 
@@ -4804,6 +5475,12 @@
       // Check for destructible terrain impact (artillery only)
       if (damage >= 3) {
         DestructibleTerrain.checkArtilleryImpact(x, y, damage, splashRadius);
+        
+        // Check for forest destruction
+        ForestSystem.checkExplosionDamage(x, y, damage, splashRadius);
+        
+        // Check for house destruction
+        TownSystem.checkExplosionDamage(x, y, damage, splashRadius);
       }
       
       setTimeout(() => explosion.remove(), 500);
