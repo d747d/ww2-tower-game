@@ -410,19 +410,251 @@
       display: none;
       z-index: 25;
     }
-    .tower.mg { background-color: #3a3a3a; border: 2px solid #6e6e6e; }
-    .tower.artillery { background-color: #2d572c; border: 2px solid #4a7b49; }
-    .tower.aa { background-color: #1a3e5c; border: 2px solid #3a6da3; }
-    .tower.sniper { background-color: #5c2b1a; border: 2px solid #8a4f3b; }
-    .tower.engineer { background-color: #8b4513; border: 2px solid #d2691e; }
-    .tower.radar { background-color: #4b0082; border: 2px solid #9370db; }
-    .tower.command { background-color: #556b2f; border: 2px solid #9acd32; }
+    /* Realistic Tower Designs */
+    .tower { position: relative; overflow: visible; }
+    
+    /* MG42 Machine Gun Nest */
+    .tower.mg { 
+      background: linear-gradient(145deg, #5a5a5a, #3a3a3a);
+      border: 2px solid #6e6e6e;
+      border-radius: 3px;
+    }
+    .tower.mg::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 3px;
+      background: #2c2c2c;
+      border-radius: 2px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+    .tower.mg::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 8px;
+      background: #4a4a4a;
+      border-radius: 2px;
+      border: 1px solid #6e6e6e;
+    }
+    
+    /* 88mm Flak Gun */
+    .tower.artillery { 
+      background: radial-gradient(circle, #4a7b49, #2d572c);
+      border: 2px solid #4a7b49;
+      border-radius: 50%;
+    }
+    .tower.artillery::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 25px;
+      height: 4px;
+      background: linear-gradient(90deg, #2c2c2c, #4a4a4a);
+      border-radius: 2px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .tower.artillery::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      background: #3a3a3a;
+      border: 2px solid #5a5a5a;
+      border-radius: 50%;
+    }
+    
+    /* Bofors 40mm AA Gun */
+    .tower.aa { 
+      background: linear-gradient(145deg, #3a6da3, #1a3e5c);
+      border: 2px solid #3a6da3;
+      border-radius: 8px;
+    }
+    .tower.aa::before {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 8px;
+      width: 14px;
+      height: 2px;
+      background: #2c2c2c;
+      border-radius: 1px;
+      box-shadow: 0 4px 0 #2c2c2c;
+    }
+    .tower.aa::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 6px;
+      width: 6px;
+      height: 6px;
+      background: #4a4a4a;
+      border: 1px solid #6a6a6a;
+      border-radius: 3px;
+    }
+    
+    /* Sniper Team */
+    .tower.sniper { 
+      background: linear-gradient(45deg, #4a3a2a, #5c2b1a, #3a2a1a);
+      border: 2px solid #8a4f3b;
+      border-radius: 4px;
+    }
+    .tower.sniper::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 15px;
+      height: 2px;
+      background: #2c2c2c;
+      border-radius: 1px;
+      transform: rotate(45deg);
+    }
+    .tower.sniper::after {
+      content: '●';
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      color: #ffaa00;
+      font-size: 8px;
+      text-shadow: 0 0 3px #ffaa00;
+    }
+    
+    /* Combat Engineers */
+    .tower.engineer { 
+      background: linear-gradient(135deg, #d2691e, #8b4513);
+      border: 2px solid #d2691e;
+      border-radius: 2px;
+    }
+    .tower.engineer::before {
+      content: '⚒';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 14px;
+      color: #2c2c2c;
+    }
+    
+    /* 81mm Mortar Team */
+    .tower.mortar { 
+      background: radial-gradient(circle, #6a5acd, #483d8b);
+      border: 2px solid #6a5acd;
+      border-radius: 50%;
+    }
+    .tower.mortar::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 3px;
+      height: 15px;
+      background: #2c2c2c;
+      border-radius: 2px;
+    }
+    .tower.mortar::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      background: #4a4a4a;
+      border: 1px solid #6a6a6a;
+      border-radius: 50%;
+    }
+    
+    /* Radar Station */
+    .tower.radar { 
+      background: linear-gradient(145deg, #9370db, #4b0082);
+      border: 2px solid #9370db;
+      border-radius: 4px;
+    }
+    .tower.radar::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 18px;
+      height: 18px;
+      background: transparent;
+      border: 2px solid #2c2c2c;
+      border-radius: 50%;
+      animation: radarSpin 3s linear infinite;
+    }
+    .tower.radar::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 2px;
+      height: 8px;
+      background: #ffaa00;
+      border-radius: 1px;
+      animation: radarSweep 3s linear infinite;
+      transform-origin: bottom center;
+    }
+    
+    @keyframes radarSpin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    
+    /* Command Bunker */
+    .tower.command { 
+      background: linear-gradient(135deg, #9acd32, #556b2f);
+      border: 2px solid #9acd32;
+      border-radius: 3px;
+    }
+    .tower.command::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      right: 4px;
+      height: 8px;
+      background: #3a3a3a;
+      border: 1px solid #5a5a5a;
+      border-radius: 2px;
+    }
+    .tower.command::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 4px;
+      height: 4px;
+      background: #ffaa00;
+      border-radius: 50%;
+      animation: commandBlink 2s infinite;
+    }
+    
+    @keyframes commandBlink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.3; }
+    }
     .tower-range { position: absolute; border-radius: 50%; background-color: rgba(255, 240, 130, 0.15); border: 1px dashed rgba(255, 204, 0, 0.3); pointer-events: none; z-index: 5; display: none; }
     .bullet { position: absolute; width: 6px; height: 6px; border-radius: 50%; z-index: 8; }
     .bullet.mg { background-color: #ffcc00; }
     .bullet.artillery { background-color: #ff6600; width: 8px; height: 8px; }
     .bullet.aa { background-color: #00ccff; }
     .bullet.sniper { background-color: #ff0000; width: 4px; height: 10px; }
+    .bullet.mortar { background-color: #ffa500; width: 6px; height: 6px; border-radius: 30%; }
     .explosion { position: absolute; width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle, rgba(255,102,0,0.8) 0%, rgba(255,153,0,0.6) 40%, rgba(255,204,0,0.2) 70%, rgba(255,204,0,0) 100%); z-index: 8; transform: translate(-50%, -50%); animation: explode 0.5s forwards; }
     @keyframes explode { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(2); opacity: 0; } }
     .enemy { position: absolute; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 16px; z-index: 9; border-radius: 3px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); }
@@ -597,8 +829,8 @@
   <div id="instructions">
     <h2 style="margin-top: 0;">WWII Tower Defense - Procedural Maps</h2>
     <p>Select a tower, place it on strategic terrain, and defend against waves of enemies!</p>
-    <p><strong>Combat Towers:</strong> Machine Gun (👨‍🦯) - infantry, Artillery (💣) - area damage, Anti-Air (⚡) - aircraft, Sniper (🔭) - high damage</p>
-    <p><strong>Support Towers:</strong> Engineer (🔧) - builds walls/mines, Radar (📡) - boosts AA range/detection, Command (🏛️) - buffs nearby towers (+30% damage)</p>
+    <p><strong>Combat Towers:</strong> MG42 (🔫) - rapid fire vs infantry, 88mm Flak (💥) - dual-purpose AT/AA, Bofors AA (🎯) - anti-aircraft, Sniper Team (🎯) - precision anti-personnel, Mortar (🎆) - indirect fire support</p>
+    <p><strong>Support Towers:</strong> Engineers (⚒️) - build fortifications, Radar (📡) - early warning system, Command Bunker (🏗️) - coordinates all defenses</p>
     <p><strong>Strategic Elements:</strong> Hills (🏔️) +25% range, Forests (🌲) concealment, Resource nodes (💰) passive income, Supply convoys (🚛) bonus resources</p>
     <div class="difficulty-selection">
       <button class="difficulty-btn selected" data-difficulty="normal">Normal</button>
@@ -660,9 +892,13 @@
         <div class="tower-icon">📡</div>
         <div class="tower-cost">$35</div>
       </div>
+      <div class="tower-option" data-type="mortar" onclick="selectTower('mortar')">
+        <div class="tower-icon">🎆</div>
+        <div class="tower-cost">$50</div>
+      </div>
       <div class="tower-option" data-type="command" onclick="selectTower('command')">
-        <div class="tower-icon">🏛️</div>
-        <div class="tower-cost">$80</div>
+        <div class="tower-icon">🏗️</div>
+        <div class="tower-cost">$100</div>
       </div>
     </div>
     <button id="start-button" onclick="startWave()">Start Wave 1</button>
@@ -684,6 +920,9 @@
       lastFrameTime: 0, terrainElements: [], frameCounter: 0, enemySpeedMultiplier: 0.025,
       walls: [], mines: [], radarCoverage: false, nextWavePreview: null, supplyConvoys: [],
       lastConvoyTime: 0, particles: [], weather: { type: 'clear', intensity: 0, lastChange: 0 },
+      coverSpots: [], enemyGroups: [], lastAIUpdate: 0,
+      destructibleTerrain: [], craters: [], modifiedPaths: [],
+      supplyTrucks: [], ammoDepots: [], lastSupplySpawn: 0,
       performanceMetrics: {
         enemiesKilled: 0, wavesCompleted: 0, accuracy: 100, efficiency: 100
       }
@@ -1208,6 +1447,1403 @@
       }
     }
 
+    // Advanced Enemy AI System
+    class EnemyAI {
+      static initializeCoverSystem() {
+        // Generate cover spots around terrain features
+        gameState.coverSpots = [];
+        
+        terrainFeatures.forEach(feature => {
+          if (feature.type === 'forest' || feature.type === 'hill') {
+            // Create cover spots around terrain features
+            const numSpots = Math.floor(feature.radius / 20);
+            for (let i = 0; i < numSpots; i++) {
+              const angle = (Math.PI * 2 * i) / numSpots;
+              const distance = feature.radius * 0.8;
+              const coverSpot = {
+                x: feature.x + Math.cos(angle) * distance,
+                y: feature.y + Math.sin(angle) * distance,
+                radius: 15,
+                occupied: false,
+                coverValue: feature.type === 'forest' ? 0.7 : 0.5, // Forest provides better cover
+                terrainType: feature.type
+              };
+              gameState.coverSpots.push(coverSpot);
+            }
+          }
+        });
+      }
+      
+      static updateEnemyAI(deltaTime) {
+        // Group enemies for coordinated behavior
+        this.updateEnemyGroups();
+        
+        // Update individual enemy AI
+        gameState.enemies.forEach(enemy => {
+          this.updateEnemyBehavior(enemy, deltaTime);
+        });
+        
+        // Update group tactics
+        gameState.enemyGroups.forEach(group => {
+          this.updateGroupTactics(group, deltaTime);
+        });
+      }
+      
+      static updateEnemyGroups() {
+        gameState.enemyGroups = [];
+        const processedEnemies = new Set();
+        
+        gameState.enemies.forEach(enemy => {
+          if (processedEnemies.has(enemy.id)) return;
+          
+          // Find nearby enemies to form a group
+          const group = {
+            id: Math.random().toString(36).substr(2, 9),
+            members: [enemy],
+            leader: enemy,
+            formation: 'line', // line, wedge, scattered
+            objective: 'advance', // advance, regroup, assault, retreat
+            targetTower: null,
+            lastTacticChange: Date.now()
+          };
+          
+          gameState.enemies.forEach(otherEnemy => {
+            if (otherEnemy.id !== enemy.id && !processedEnemies.has(otherEnemy.id)) {
+              const dx = enemy.x - otherEnemy.x;
+              const dy = enemy.y - otherEnemy.y;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              
+              // Group enemies within 80 units of each other
+              if (distance <= 80 && group.members.length < 6) {
+                group.members.push(otherEnemy);
+                processedEnemies.add(otherEnemy.id);
+                
+                // The strongest enemy becomes the leader
+                if (otherEnemy.maxHealth > group.leader.maxHealth) {
+                  group.leader = otherEnemy;
+                }
+              }
+            }
+          });
+          
+          processedEnemies.add(enemy.id);
+          if (group.members.length > 1) {
+            gameState.enemyGroups.push(group);
+          }
+        });
+      }
+      
+      static updateEnemyBehavior(enemy, deltaTime) {
+        if (!enemy.aiState) {
+          enemy.aiState = {
+            behavior: 'advancing', // advancing, seeking_cover, in_cover, flanking, retreating
+            target: null,
+            coverSpot: null,
+            lastDecision: Date.now(),
+            threatLevel: 0,
+            flankingPath: null,
+            originalSpeed: enemy.speed
+          };
+        }
+        
+        const aiState = enemy.aiState;
+        const currentTime = Date.now();
+        
+        // Update threat assessment
+        this.assessThreat(enemy);
+        
+        // Make decisions every 500ms
+        if (currentTime - aiState.lastDecision > 500) {
+          this.makeDecision(enemy);
+          aiState.lastDecision = currentTime;
+        }
+        
+        // Execute current behavior
+        this.executeBehavior(enemy, deltaTime);
+      }
+      
+      static assessThreat(enemy) {
+        const aiState = enemy.aiState;
+        let threatLevel = 0;
+        
+        // Check nearby towers
+        gameState.towers.forEach(tower => {
+          const dx = enemy.x - tower.x;
+          const dy = enemy.y - tower.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance <= tower.range) {
+            // Higher threat for towers that can target this enemy type
+            if (tower.targets.includes(enemy.type)) {
+              const threat = (tower.range - distance) / tower.range;
+              threatLevel += threat * (tower.damage / 3);
+            }
+          }
+        });
+        
+        // Consider recent damage
+        if (enemy.recentDamage && Date.now() - enemy.recentDamage < 2000) {
+          threatLevel += 0.5;
+        }
+        
+        aiState.threatLevel = Math.min(threatLevel, 2.0);
+      }
+      
+      static makeDecision(enemy) {
+        const aiState = enemy.aiState;
+        const threatLevel = aiState.threatLevel;
+        
+        // Decision tree based on threat level and enemy type
+        if (threatLevel > 1.5 && enemy.health < enemy.maxHealth * 0.4) {
+          // High threat, low health - seek cover or retreat
+          if (Math.random() < 0.7) {
+            this.seekCover(enemy);
+          } else {
+            aiState.behavior = 'retreating';
+          }
+        } else if (threatLevel > 1.0 && enemy.type !== 'aircraft') {
+          // Moderate threat - seek cover or try flanking
+          if (Math.random() < 0.6) {
+            this.seekCover(enemy);
+          } else {
+            this.attemptFlanking(enemy);
+          }
+        } else if (threatLevel > 0.5 && Math.random() < 0.3) {
+          // Low threat but cautious - occasional cover seeking
+          this.seekCover(enemy);
+        } else {
+          // Default - advance along path
+          aiState.behavior = 'advancing';
+          aiState.coverSpot = null;
+        }
+      }
+      
+      static seekCover(enemy) {
+        const aiState = enemy.aiState;
+        let bestCover = null;
+        let bestScore = -1;
+        
+        gameState.coverSpots.forEach(spot => {
+          if (spot.occupied) return;
+          
+          const dx = enemy.x - spot.x;
+          const dy = enemy.y - spot.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          // Score based on cover value, distance, and tower threat reduction
+          let score = spot.coverValue;
+          score -= distance / 100; // Prefer closer cover
+          
+          // Check if cover actually reduces tower threat
+          let threatReduction = 0;
+          gameState.towers.forEach(tower => {
+            const towerDx = spot.x - tower.x;
+            const towerDy = spot.y - tower.y;
+            const towerDistance = Math.sqrt(towerDx * towerDx + towerDy * towerDy);
+            
+            if (towerDistance <= tower.range && tower.targets.includes(enemy.type)) {
+              threatReduction += spot.coverValue * 0.5;
+            }
+          });
+          
+          score += threatReduction;
+          
+          if (score > bestScore && distance <= 120) {
+            bestScore = score;
+            bestCover = spot;
+          }
+        });
+        
+        if (bestCover) {
+          aiState.behavior = 'seeking_cover';
+          aiState.coverSpot = bestCover;
+          bestCover.occupied = true;
+        }
+      }
+      
+      static attemptFlanking(enemy) {
+        const aiState = enemy.aiState;
+        
+        // Find the most threatening tower
+        let primaryThreat = null;
+        let maxThreat = 0;
+        
+        gameState.towers.forEach(tower => {
+          const dx = enemy.x - tower.x;
+          const dy = enemy.y - tower.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance <= tower.range && tower.targets.includes(enemy.type)) {
+            const threat = tower.damage * (tower.range - distance) / tower.range;
+            if (threat > maxThreat) {
+              maxThreat = threat;
+              primaryThreat = tower;
+            }
+          }
+        });
+        
+        if (primaryThreat) {
+          // Try to flank around the tower
+          const towerX = primaryThreat.x;
+          const towerY = primaryThreat.y;
+          const flankDistance = primaryThreat.range * 1.2;
+          
+          // Choose flanking direction (left or right of tower)
+          const angle = Math.atan2(enemy.y - towerY, enemy.x - towerX);
+          const flankAngle = angle + (Math.random() < 0.5 ? Math.PI/2 : -Math.PI/2);
+          
+          aiState.behavior = 'flanking';
+          aiState.flankingPath = {
+            x: towerX + Math.cos(flankAngle) * flankDistance,
+            y: towerY + Math.sin(flankAngle) * flankDistance,
+            targetTower: primaryThreat
+          };
+        }
+      }
+      
+      static executeBehavior(enemy, deltaTime) {
+        const aiState = enemy.aiState;
+        
+        switch (aiState.behavior) {
+          case 'seeking_cover':
+            this.moveTowardsCover(enemy, deltaTime);
+            break;
+          case 'in_cover':
+            this.stayInCover(enemy, deltaTime);
+            break;
+          case 'flanking':
+            this.executeFlankingManeuver(enemy, deltaTime);
+            break;
+          case 'retreating':
+            this.executeRetreat(enemy, deltaTime);
+            break;
+          default: // advancing
+            this.resumeNormalMovement(enemy, deltaTime);
+            break;
+        }
+      }
+      
+      static moveTowardsCover(enemy, deltaTime) {
+        const aiState = enemy.aiState;
+        const coverSpot = aiState.coverSpot;
+        
+        if (!coverSpot) {
+          aiState.behavior = 'advancing';
+          return;
+        }
+        
+        const dx = coverSpot.x - enemy.x;
+        const dy = coverSpot.y - enemy.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 10) {
+          aiState.behavior = 'in_cover';
+          aiState.coverTime = Date.now();
+        } else {
+          // Move towards cover at reduced speed
+          const moveSpeed = aiState.originalSpeed * 0.8 * (deltaTime / 16);
+          enemy.x += (dx / distance) * moveSpeed;
+          enemy.y += (dy / distance) * moveSpeed;
+          
+          // Update visual position
+          enemy.element.style.left = `${enemy.x - enemy.element.offsetWidth/2}px`;
+          enemy.element.style.top = `${enemy.y - enemy.element.offsetHeight/2}px`;
+        }
+      }
+      
+      static stayInCover(enemy, deltaTime) {
+        const aiState = enemy.aiState;
+        
+        // Stay in cover for 2-4 seconds
+        const coverDuration = 2000 + Math.random() * 2000;
+        if (Date.now() - aiState.coverTime > coverDuration || aiState.threatLevel < 0.3) {
+          // Leave cover
+          if (aiState.coverSpot) {
+            aiState.coverSpot.occupied = false;
+            aiState.coverSpot = null;
+          }
+          aiState.behavior = 'advancing';
+        }
+        
+        // Slight movement while in cover
+        enemy.x += (Math.random() - 0.5) * 2;
+        enemy.y += (Math.random() - 0.5) * 2;
+        enemy.element.style.left = `${enemy.x - enemy.element.offsetWidth/2}px`;
+        enemy.element.style.top = `${enemy.y - enemy.element.offsetHeight/2}px`;
+      }
+      
+      static executeFlankingManeuver(enemy, deltaTime) {
+        const aiState = enemy.aiState;
+        const flankPath = aiState.flankingPath;
+        
+        if (!flankPath) {
+          aiState.behavior = 'advancing';
+          return;
+        }
+        
+        const dx = flankPath.x - enemy.x;
+        const dy = flankPath.y - enemy.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 20) {
+          // Flanking position reached, resume normal movement
+          aiState.behavior = 'advancing';
+          aiState.flankingPath = null;
+        } else {
+          // Move towards flanking position at increased speed
+          const moveSpeed = aiState.originalSpeed * 1.2 * (deltaTime / 16);
+          enemy.x += (dx / distance) * moveSpeed;
+          enemy.y += (dy / distance) * moveSpeed;
+          
+          enemy.element.style.left = `${enemy.x - enemy.element.offsetWidth/2}px`;
+          enemy.element.style.top = `${enemy.y - enemy.element.offsetHeight/2}px`;
+        }
+      }
+      
+      static executeRetreat(enemy, deltaTime) {
+        const aiState = enemy.aiState;
+        
+        // Move backwards along the path
+        if (enemy.pathIndex > 0) {
+          enemy.pathIndex -= 0.5 * (deltaTime / 16);
+          if (enemy.pathIndex < 0) enemy.pathIndex = 0;
+          
+          const currentPoint = path[Math.floor(enemy.pathIndex)];
+          if (currentPoint) {
+            enemy.x = currentPoint.x;
+            enemy.y = currentPoint.y;
+            enemy.element.style.left = `${enemy.x - enemy.element.offsetWidth/2}px`;
+            enemy.element.style.top = `${enemy.y - enemy.element.offsetHeight/2}px`;
+          }
+        }
+        
+        // Stop retreating after some time or if health improves
+        if (Date.now() - aiState.lastDecision > 3000 || enemy.health > enemy.maxHealth * 0.6) {
+          aiState.behavior = 'advancing';
+        }
+      }
+      
+      static resumeNormalMovement(enemy, deltaTime) {
+        // Resume normal path following with slight speed variation
+        const speedMultiplier = 0.9 + Math.random() * 0.2; // 90-110% normal speed
+        enemy.speed = enemy.aiState.originalSpeed * speedMultiplier;
+      }
+      
+      static updateGroupTactics(group, deltaTime) {
+        const currentTime = Date.now();
+        
+        // Change tactics every 5-10 seconds
+        if (currentTime - group.lastTacticChange > 5000 + Math.random() * 5000) {
+          this.chooseGroupTactic(group);
+          group.lastTacticChange = currentTime;
+        }
+        
+        // Execute group tactics
+        this.executeGroupTactic(group, deltaTime);
+      }
+      
+      static chooseGroupTactic(group) {
+        const avgHealth = group.members.reduce((sum, enemy) => sum + enemy.health, 0) / group.members.length;
+        const avgMaxHealth = group.members.reduce((sum, enemy) => sum + enemy.maxHealth, 0) / group.members.length;
+        const healthRatio = avgHealth / avgMaxHealth;
+        
+        if (healthRatio < 0.4) {
+          group.objective = 'regroup';
+          group.formation = 'scattered';
+        } else if (healthRatio > 0.8 && Math.random() < 0.3) {
+          group.objective = 'assault';
+          group.formation = 'wedge';
+          // Target the weakest tower
+          group.targetTower = this.findWeakestTower(group);
+        } else {
+          group.objective = 'advance';
+          group.formation = Math.random() < 0.5 ? 'line' : 'scattered';
+        }
+      }
+      
+      static findWeakestTower(group) {
+        let weakestTower = null;
+        let minEffectiveness = Infinity;
+        
+        gameState.towers.forEach(tower => {
+          const effectiveness = tower.damage * tower.fireRate * tower.ammo;
+          if (effectiveness < minEffectiveness) {
+            minEffectiveness = effectiveness;
+            weakestTower = tower;
+          }
+        });
+        
+        return weakestTower;
+      }
+      
+      static executeGroupTactic(group, deltaTime) {
+        switch (group.objective) {
+          case 'regroup':
+            this.executeRegroup(group, deltaTime);
+            break;
+          case 'assault':
+            this.executeAssault(group, deltaTime);
+            break;
+          default: // advance
+            this.executeAdvance(group, deltaTime);
+            break;
+        }
+      }
+      
+      static executeRegroup(group, deltaTime) {
+        const leader = group.leader;
+        
+        group.members.forEach(enemy => {
+          if (enemy === leader) return;
+          
+          const dx = leader.x - enemy.x;
+          const dy = leader.y - enemy.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance > 40) {
+            // Move towards leader
+            const moveSpeed = enemy.aiState.originalSpeed * 0.6 * (deltaTime / 16);
+            enemy.x += (dx / distance) * moveSpeed;
+            enemy.y += (dy / distance) * moveSpeed;
+            
+            enemy.element.style.left = `${enemy.x - enemy.element.offsetWidth/2}px`;
+            enemy.element.style.top = `${enemy.y - enemy.element.offsetHeight/2}px`;
+          }
+        });
+      }
+      
+      static executeAssault(group, deltaTime) {
+        if (!group.targetTower) return;
+        
+        const target = group.targetTower;
+        
+        group.members.forEach(enemy => {
+          const dx = target.x - enemy.x;
+          const dy = target.y - enemy.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance > 30) {
+            // Move towards target tower aggressively
+            const moveSpeed = enemy.aiState.originalSpeed * 1.3 * (deltaTime / 16);
+            enemy.x += (dx / distance) * moveSpeed;
+            enemy.y += (dy / distance) * moveSpeed;
+            
+            enemy.element.style.left = `${enemy.x - enemy.element.offsetWidth/2}px`;
+            enemy.element.style.top = `${enemy.y - enemy.element.offsetHeight/2}px`;
+          }
+        });
+      }
+      
+      static executeAdvance(group, deltaTime) {
+        // Maintain formation while advancing
+        if (group.formation === 'line') {
+          this.maintainLineFormation(group, deltaTime);
+        } else if (group.formation === 'wedge') {
+          this.maintainWedgeFormation(group, deltaTime);
+        }
+        // Scattered formation doesn't need special coordination
+      }
+      
+      static maintainLineFormation(group, deltaTime) {
+        const leader = group.leader;
+        const members = group.members.filter(m => m !== leader);
+        
+        members.forEach((enemy, index) => {
+          const offset = (index - (members.length - 1) / 2) * 30;
+          const targetX = leader.x + offset;
+          const targetY = leader.y;
+          
+          const dx = targetX - enemy.x;
+          const dy = targetY - enemy.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance > 15) {
+            const moveSpeed = enemy.aiState.originalSpeed * 0.8 * (deltaTime / 16);
+            enemy.x += (dx / distance) * moveSpeed;
+            enemy.y += (dy / distance) * moveSpeed;
+            
+            enemy.element.style.left = `${enemy.x - enemy.element.offsetWidth/2}px`;
+            enemy.element.style.top = `${enemy.y - enemy.element.offsetHeight/2}px`;
+          }
+        });
+      }
+      
+      static maintainWedgeFormation(group, deltaTime) {
+        const leader = group.leader;
+        const members = group.members.filter(m => m !== leader);
+        
+        members.forEach((enemy, index) => {
+          const side = index % 2 === 0 ? 1 : -1;
+          const rank = Math.floor(index / 2) + 1;
+          const targetX = leader.x + side * rank * 25;
+          const targetY = leader.y + rank * 30;
+          
+          const dx = targetX - enemy.x;
+          const dy = targetY - enemy.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance > 15) {
+            const moveSpeed = enemy.aiState.originalSpeed * 0.8 * (deltaTime / 16);
+            enemy.x += (dx / distance) * moveSpeed;
+            enemy.y += (dy / distance) * moveSpeed;
+            
+            enemy.element.style.left = `${enemy.x - enemy.element.offsetWidth/2}px`;
+            enemy.element.style.top = `${enemy.y - enemy.element.offsetHeight/2}px`;
+          }
+        });
+      }
+      
+      static cleanupAI() {
+        // Free up cover spots
+        gameState.coverSpots.forEach(spot => {
+          spot.occupied = false;
+        });
+        gameState.enemyGroups = [];
+      }
+    }
+
+    // Destructible Terrain System
+    class DestructibleTerrain {
+      static initializeDestructibleElements() {
+        gameState.destructibleTerrain = [];
+        
+        // Add destructible terrain around some features (but not forests/clouds)
+        terrainFeatures.forEach(feature => {
+          if (feature.type === 'hill' && Math.random() < 0.4) {
+            // Create destructible terrain patches only around hills
+            const numPatches = Math.floor(Math.random() * 2) + 1;
+            for (let i = 0; i < numPatches; i++) {
+              const angle = Math.random() * Math.PI * 2;
+              const distance = 30 + Math.random() * 40;
+              
+              const destructible = {
+                id: Math.random().toString(36).substr(2, 9),
+                x: feature.x + Math.cos(angle) * distance,
+                y: feature.y + Math.sin(angle) * distance,
+                radius: 25 + Math.random() * 15,
+                health: 50 + Math.random() * 30,
+                maxHealth: 50 + Math.random() * 30,
+                type: 'rock_formation', // rock_formation, building_ruins, bunker
+                element: null,
+                destroyed: false
+              };
+              
+              destructible.maxHealth = destructible.health;
+              gameState.destructibleTerrain.push(destructible);
+              this.createDestructibleElement(destructible);
+            }
+          }
+        });
+        
+        // Add some standalone destructible elements
+        for (let i = 0; i < 8; i++) {
+          const destructible = {
+            id: Math.random().toString(36).substr(2, 9),
+            x: 100 + Math.random() * 600,
+            y: 50 + Math.random() * 400,
+            radius: 20 + Math.random() * 20,
+            health: 30 + Math.random() * 40,
+            maxHealth: 30 + Math.random() * 40,
+            type: ['rock_formation', 'building_ruins', 'bunker'][Math.floor(Math.random() * 3)],
+            element: null,
+            destroyed: false
+          };
+          
+          // Don't place on paths
+          const onPath = path.some(point => {
+            const dx = point.x - destructible.x;
+            const dy = point.y - destructible.y;
+            return Math.sqrt(dx * dx + dy * dy) < 40;
+          });
+          
+          if (!onPath) {
+            destructible.maxHealth = destructible.health;
+            gameState.destructibleTerrain.push(destructible);
+            this.createDestructibleElement(destructible);
+          }
+        }
+      }
+      
+      static createDestructibleElement(destructible) {
+        const element = document.createElement('div');
+        element.className = 'destructible-terrain';
+        element.style.position = 'absolute';
+        element.style.width = `${destructible.radius * 2}px`;
+        element.style.height = `${destructible.radius * 2}px`;
+        element.style.left = `${destructible.x - destructible.radius}px`;
+        element.style.top = `${destructible.y - destructible.radius}px`;
+        element.style.borderRadius = '20%';
+        element.style.cursor = 'crosshair';
+        element.style.zIndex = '7';
+        element.style.display = 'flex';
+        element.style.alignItems = 'center';
+        element.style.justifyContent = 'center';
+        element.style.fontSize = '16px';
+        element.style.transition = 'all 0.3s ease';
+        
+        // Style based on type
+        switch (destructible.type) {
+          case 'rock_formation':
+            element.style.backgroundColor = 'rgba(120, 120, 120, 0.8)';
+            element.style.border = '2px solid #888';
+            element.textContent = '🪨';
+            break;
+          case 'building_ruins':
+            element.style.backgroundColor = 'rgba(139, 69, 19, 0.8)';
+            element.style.border = '2px solid #8B4513';
+            element.textContent = '🏚️';
+            break;
+          case 'bunker':
+            element.style.backgroundColor = 'rgba(85, 85, 85, 0.9)';
+            element.style.border = '2px solid #555';
+            element.textContent = '🏛️';
+            break;
+        }
+        
+        // Add health bar
+        const healthBar = document.createElement('div');
+        healthBar.className = 'terrain-health-bar';
+        healthBar.style.position = 'absolute';
+        healthBar.style.width = '100%';
+        healthBar.style.height = '4px';
+        healthBar.style.backgroundColor = '#333';
+        healthBar.style.bottom = '-6px';
+        healthBar.style.left = '0';
+        healthBar.style.borderRadius = '2px';
+        healthBar.style.overflow = 'hidden';
+        
+        const healthFill = document.createElement('div');
+        healthFill.className = 'terrain-health-fill';
+        healthFill.style.height = '100%';
+        healthFill.style.backgroundColor = '#32cd32';
+        healthFill.style.width = '100%';
+        healthFill.style.transition = 'width 0.2s';
+        healthBar.appendChild(healthFill);
+        element.appendChild(healthBar);
+        
+        destructible.element = element;
+        destructible.healthFill = healthFill;
+        gameBoard.appendChild(element);
+        
+        // Add click handler for manual destruction (testing)
+        element.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.damageDestructible(destructible, 20);
+        });
+      }
+      
+      static checkArtilleryImpact(x, y, damage, splashRadius) {
+        const impactedTerrain = [];
+        
+        gameState.destructibleTerrain.forEach(terrain => {
+          if (terrain.destroyed) return;
+          
+          const dx = terrain.x - x;
+          const dy = terrain.y - y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance <= splashRadius + terrain.radius) {
+            // Calculate damage based on distance
+            const damageMultiplier = Math.max(0.3, 1 - (distance / splashRadius));
+            const terrainDamage = Math.floor(damage * damageMultiplier);
+            
+            this.damageDestructible(terrain, terrainDamage);
+            impactedTerrain.push(terrain);
+          }
+        });
+        
+        // Create crater at impact point
+        if (damage >= 3) { // Only large explosions create craters
+          this.createCrater(x, y, Math.min(splashRadius * 0.7, 40));
+        }
+        
+        return impactedTerrain;
+      }
+      
+      static damageDestructible(terrain, damage) {
+        if (terrain.destroyed) return;
+        
+        terrain.health -= damage;
+        
+        // Update health bar
+        const healthPercentage = Math.max(0, terrain.health / terrain.maxHealth);
+        terrain.healthFill.style.width = `${healthPercentage * 100}%`;
+        
+        // Change color as health decreases
+        if (healthPercentage > 0.6) {
+          terrain.healthFill.style.backgroundColor = '#32cd32'; // Green
+        } else if (healthPercentage > 0.3) {
+          terrain.healthFill.style.backgroundColor = '#ffa500'; // Orange
+        } else {
+          terrain.healthFill.style.backgroundColor = '#ff4500'; // Red
+        }
+        
+        // Add damage effect
+        terrain.element.style.filter = 'brightness(1.5)';
+        setTimeout(() => {
+          if (terrain.element) {
+            terrain.element.style.filter = 'brightness(1)';
+          }
+        }, 100);
+        
+        if (terrain.health <= 0) {
+          this.destroyTerrain(terrain);
+        }
+      }
+      
+      static destroyTerrain(terrain) {
+        if (terrain.destroyed) return;
+        
+        terrain.destroyed = true;
+        
+        // Create destruction particles
+        ParticleSystem.createExplosionParticles(terrain.x, terrain.y, 6);
+        LightingSystem.createExplosionLight(terrain.x, terrain.y, 1);
+        
+        // Remove visual element with animation
+        if (terrain.element) {
+          terrain.element.style.transform = 'scale(0)';
+          terrain.element.style.opacity = '0';
+          setTimeout(() => {
+            if (terrain.element && terrain.element.parentNode) {
+              terrain.element.remove();
+            }
+          }, 300);
+        }
+        
+        // Create rubble/debris
+        this.createDebris(terrain);
+        
+        // Check if this creates new paths for enemies
+        this.checkForNewPaths(terrain);
+      }
+      
+      static createCrater(x, y, radius) {
+        const crater = {
+          id: Math.random().toString(36).substr(2, 9),
+          x, y, radius,
+          created: Date.now(),
+          element: null
+        };
+        
+        const craterElement = document.createElement('div');
+        craterElement.className = 'crater';
+        craterElement.style.position = 'absolute';
+        craterElement.style.width = `${radius * 2}px`;
+        craterElement.style.height = `${radius * 2}px`;
+        craterElement.style.left = `${x - radius}px`;
+        craterElement.style.top = `${y - radius}px`;
+        craterElement.style.borderRadius = '50%';
+        craterElement.style.backgroundColor = 'rgba(80, 60, 40, 0.6)';
+        craterElement.style.border = '2px solid rgba(60, 40, 20, 0.8)';
+        craterElement.style.boxShadow = 'inset 0 0 10px rgba(0, 0, 0, 0.5)';
+        craterElement.style.zIndex = '6';
+        craterElement.style.animation = 'craterForm 0.5s ease-out forwards';
+        
+        // Add crater formation animation
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes craterForm {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+          }
+        `;
+        if (!document.querySelector('style[data-crater-anim]')) {
+          style.setAttribute('data-crater-anim', 'true');
+          document.head.appendChild(style);
+        }
+        
+        crater.element = craterElement;
+        gameState.craters.push(crater);
+        gameBoard.appendChild(craterElement);
+      }
+      
+      static createDebris(terrain) {
+        // Create small debris pieces
+        for (let i = 0; i < 4; i++) {
+          const debris = document.createElement('div');
+          debris.className = 'terrain-debris';
+          debris.style.position = 'absolute';
+          debris.style.width = '8px';
+          debris.style.height = '8px';
+          debris.style.backgroundColor = '#666';
+          debris.style.borderRadius = '2px';
+          debris.style.zIndex = '6';
+          
+          const angle = (Math.PI * 2 * i) / 4 + Math.random() * 0.5;
+          const distance = terrain.radius + Math.random() * 20;
+          const debrisX = terrain.x + Math.cos(angle) * distance;
+          const debrisY = terrain.y + Math.sin(angle) * distance;
+          
+          debris.style.left = `${debrisX - 4}px`;
+          debris.style.top = `${debrisY - 4}px`;
+          debris.style.animation = 'debrisFall 1s ease-out forwards';
+          
+          gameBoard.appendChild(debris);
+          
+          // Remove debris after animation
+          setTimeout(() => debris.remove(), 1000);
+        }
+        
+        // Add debris animation if not exists
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes debrisFall {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(0) rotate(180deg); opacity: 0.3; }
+          }
+        `;
+        if (!document.querySelector('style[data-debris-anim]')) {
+          style.setAttribute('data-debris-anim', 'true');
+          document.head.appendChild(style);
+        }
+      }
+      
+      static checkForNewPaths(destroyedTerrain) {
+        // Check if destroying this terrain opens up new enemy routes
+        // This is a simplified implementation - in a full game, you'd use pathfinding
+        
+        const nearbyEnemies = gameState.enemies.filter(enemy => {
+          const dx = enemy.x - destroyedTerrain.x;
+          const dy = enemy.y - destroyedTerrain.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          return distance <= 100 && enemy.aiState;
+        });
+        
+        // Give nearby enemies a chance to find new flanking routes
+        nearbyEnemies.forEach(enemy => {
+          if (enemy.aiState && Math.random() < 0.4) {
+            enemy.aiState.behavior = 'advancing'; // Reset behavior to recalculate
+            enemy.aiState.lastDecision = 0; // Force immediate decision
+          }
+        });
+      }
+      
+      static isPositionBlocked(x, y, radius = 15) {
+        // Check if position is blocked by destructible terrain
+        return gameState.destructibleTerrain.some(terrain => {
+          if (terrain.destroyed) return false;
+          
+          const dx = terrain.x - x;
+          const dy = terrain.y - y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          return distance < (terrain.radius + radius);
+        });
+      }
+      
+      static getBlockingTerrain(x, y, radius = 15) {
+        // Get all terrain elements blocking this position
+        return gameState.destructibleTerrain.filter(terrain => {
+          if (terrain.destroyed) return false;
+          
+          const dx = terrain.x - x;
+          const dy = terrain.y - y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          return distance < (terrain.radius + radius);
+        });
+      }
+      
+      static cleanup() {
+        // Remove all destructible terrain and craters
+        gameState.destructibleTerrain.forEach(terrain => {
+          if (terrain.element && terrain.element.parentNode) {
+            terrain.element.remove();
+          }
+        });
+        
+        gameState.craters.forEach(crater => {
+          if (crater.element && crater.element.parentNode) {
+            crater.element.remove();
+          }
+        });
+        
+        gameState.destructibleTerrain = [];
+        gameState.craters = [];
+        gameState.modifiedPaths = [];
+      }
+    }
+
+    // Supply Line System
+    class SupplyLineSystem {
+      static initializeSupplyDepots() {
+        gameState.ammoDepots = [];
+        
+        // Create 2-3 ammo depots around the map edges
+        const depotPositions = [
+          { x: 50, y: 50 },
+          { x: 750, y: 450 },
+          { x: 400, y: 25 }
+        ];
+        
+        depotPositions.forEach((pos, index) => {
+          const depot = {
+            id: Math.random().toString(36).substr(2, 9),
+            x: pos.x,
+            y: pos.y,
+            ammoSupply: 100,
+            maxAmmoSupply: 100,
+            element: null,
+            lastRestock: Date.now(),
+            type: 'depot'
+          };
+          
+          this.createDepotElement(depot);
+          gameState.ammoDepots.push(depot);
+        });
+      }
+      
+      static createDepotElement(depot) {
+        const element = document.createElement('div');
+        element.className = 'ammo-depot';
+        element.style.position = 'absolute';
+        element.style.width = '40px';
+        element.style.height = '40px';
+        element.style.left = `${depot.x - 20}px`;
+        element.style.top = `${depot.y - 20}px`;
+        element.style.backgroundColor = 'rgba(139, 69, 19, 0.9)';
+        element.style.border = '3px solid #8B4513';
+        element.style.borderRadius = '10px';
+        element.style.cursor = 'pointer';
+        element.style.zIndex = '10';
+        element.style.display = 'flex';
+        element.style.alignItems = 'center';
+        element.style.justifyContent = 'center';
+        element.style.fontSize = '20px';
+        element.textContent = '📦';
+        element.style.transition = 'all 0.3s ease';
+        element.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.3)';
+        
+        // Add ammo level indicator
+        const ammoIndicator = document.createElement('div');
+        ammoIndicator.className = 'depot-ammo-indicator';
+        ammoIndicator.style.position = 'absolute';
+        ammoIndicator.style.bottom = '-8px';
+        ammoIndicator.style.left = '0';
+        ammoIndicator.style.width = '100%';
+        ammoIndicator.style.height = '4px';
+        ammoIndicator.style.backgroundColor = '#333';
+        ammoIndicator.style.borderRadius = '2px';
+        ammoIndicator.style.overflow = 'hidden';
+        
+        const ammoFill = document.createElement('div');
+        ammoFill.className = 'depot-ammo-fill';
+        ammoFill.style.height = '100%';
+        ammoFill.style.backgroundColor = '#ffa500';
+        ammoFill.style.width = '100%';
+        ammoFill.style.transition = 'width 0.3s';
+        ammoIndicator.appendChild(ammoFill);
+        element.appendChild(ammoIndicator);
+        
+        depot.element = element;
+        depot.ammoFill = ammoFill;
+        gameBoard.appendChild(element);
+        
+        // Add hover effect
+        element.addEventListener('mouseenter', () => {
+          element.style.transform = 'scale(1.1)';
+          element.style.boxShadow = '0 4px 12px rgba(255, 165, 0, 0.6)';
+        });
+        
+        element.addEventListener('mouseleave', () => {
+          element.style.transform = 'scale(1)';
+          element.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.3)';
+        });
+        
+        // Add click handler to manually request supply truck
+        element.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.requestSupplyDelivery(depot);
+        });
+      }
+      
+      static updateSupplySystem(currentTime) {
+        // Spawn supply trucks periodically
+        if (currentTime - gameState.lastSupplySpawn > 15000 + Math.random() * 10000) {
+          this.spawnSupplyTruck();
+          gameState.lastSupplySpawn = currentTime;
+        }
+        
+        // Update supply trucks
+        this.updateSupplyTrucks(currentTime);
+        
+        // Restock depots over time
+        this.updateDepotRestocking(currentTime);
+        
+        // Check for low ammo towers that need resupply
+        this.checkTowerAmmoNeeds();
+      }
+      
+      static spawnSupplyTruck() {
+        // Don't spawn if there are already too many trucks
+        if (gameState.supplyTrucks.length >= 3) return;
+        
+        // Find a depot with ammo to dispatch from
+        const availableDepot = gameState.ammoDepots.find(depot => depot.ammoSupply > 20);
+        if (!availableDepot) return;
+        
+        // Find towers that need ammo
+        const needyTowers = gameState.towers.filter(tower => 
+          tower.maxAmmo > 0 && tower.ammo < tower.maxAmmo * 0.4
+        );
+        
+        if (needyTowers.length === 0) return;
+        
+        // Pick the most urgent tower (lowest ammo percentage)
+        const targetTower = needyTowers.reduce((worst, tower) => {
+          const currentRatio = tower.ammo / tower.maxAmmo;
+          const worstRatio = worst.ammo / worst.maxAmmo;
+          return currentRatio < worstRatio ? tower : worst;
+        });
+        
+        const truck = {
+          id: Math.random().toString(36).substr(2, 9),
+          x: availableDepot.x,
+          y: availableDepot.y,
+          targetX: targetTower.x,
+          targetY: targetTower.y,
+          sourceDepot: availableDepot,
+          targetTower: targetTower,
+          speed: 2,
+          ammoCarried: Math.min(availableDepot.ammoSupply, targetTower.maxAmmo - targetTower.ammo),
+          health: 25,
+          maxHealth: 25,
+          element: null,
+          delivered: false,
+          underAttack: false
+        };
+        
+        // Deduct ammo from depot
+        availableDepot.ammoSupply -= truck.ammoCarried;
+        this.updateDepotDisplay(availableDepot);
+        
+        this.createSupplyTruckElement(truck);
+        gameState.supplyTrucks.push(truck);
+      }
+      
+      static createSupplyTruckElement(truck) {
+        const element = document.createElement('div');
+        element.className = 'supply-truck';
+        element.style.position = 'absolute';
+        element.style.width = '25px';
+        element.style.height = '25px';
+        element.style.left = `${truck.x - 12}px`;
+        element.style.top = `${truck.y - 12}px`;
+        element.style.backgroundColor = '#4CAF50';
+        element.style.border = '2px solid #2E7D32';
+        element.style.borderRadius = '3px';
+        element.style.cursor = 'pointer';
+        element.style.zIndex = '11';
+        element.style.display = 'flex';
+        element.style.alignItems = 'center';
+        element.style.justifyContent = 'center';
+        element.style.fontSize = '14px';
+        element.textContent = '🚛';
+        element.style.transition = 'all 0.2s ease';
+        element.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.3)';
+        
+        // Add health bar
+        const healthBar = document.createElement('div');
+        healthBar.className = 'truck-health-bar';
+        healthBar.style.position = 'absolute';
+        healthBar.style.width = '100%';
+        healthBar.style.height = '3px';
+        healthBar.style.backgroundColor = '#333';
+        healthBar.style.top = '-5px';
+        healthBar.style.left = '0';
+        healthBar.style.borderRadius = '1px';
+        healthBar.style.overflow = 'hidden';
+        
+        const healthFill = document.createElement('div');
+        healthFill.className = 'truck-health-fill';
+        healthFill.style.height = '100%';
+        healthFill.style.backgroundColor = '#32cd32';
+        healthFill.style.width = '100%';
+        healthFill.style.transition = 'width 0.2s';
+        healthBar.appendChild(healthFill);
+        element.appendChild(healthBar);
+        
+        truck.element = element;
+        truck.healthFill = healthFill;
+        gameBoard.appendChild(element);
+        
+        // Add click handler for manual escort
+        element.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.highlightSupplyRoute(truck);
+        });
+      }
+      
+      static updateSupplyTrucks(currentTime) {
+        const trucksToRemove = [];
+        
+        gameState.supplyTrucks.forEach(truck => {
+          if (truck.delivered) return;
+          
+          // Move towards target
+          const dx = truck.targetX - truck.x;
+          const dy = truck.targetY - truck.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 15) {
+            // Truck reached tower
+            this.deliverAmmo(truck);
+            trucksToRemove.push(truck);
+            return;
+          }
+          
+          // Move truck
+          truck.x += (dx / distance) * truck.speed;
+          truck.y += (dy / distance) * truck.speed;
+          
+          truck.element.style.left = `${truck.x - 12}px`;
+          truck.element.style.top = `${truck.y - 12}px`;
+          
+          // Check if truck is under attack by enemies
+          this.checkTruckUnderAttack(truck);
+        });
+        
+        // Remove delivered trucks
+        trucksToRemove.forEach(truck => this.removeSupplyTruck(truck));
+      }
+      
+      static checkTruckUnderAttack(truck) {
+        let underAttack = false;
+        
+        gameState.enemies.forEach(enemy => {
+          const dx = enemy.x - truck.x;
+          const dy = enemy.y - truck.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 30) {
+            underAttack = true;
+            
+            // Damage truck occasionally
+            if (Math.random() < 0.01) { // 1% chance per frame
+              truck.health -= enemy.damage;
+              truck.healthFill.style.width = `${(truck.health / truck.maxHealth) * 100}%`;
+              
+              // Change health bar color
+              const healthRatio = truck.health / truck.maxHealth;
+              if (healthRatio > 0.6) {
+                truck.healthFill.style.backgroundColor = '#32cd32';
+              } else if (healthRatio > 0.3) {
+                truck.healthFill.style.backgroundColor = '#ffa500';
+              } else {
+                truck.healthFill.style.backgroundColor = '#ff4500';
+              }
+              
+              if (truck.health <= 0) {
+                this.destroySupplyTruck(truck);
+                return;
+              }
+            }
+          }
+        });
+        
+        // Visual indication of being under attack
+        if (underAttack && !truck.underAttack) {
+          truck.element.style.animation = 'truckDanger 0.5s infinite';
+          truck.underAttack = true;
+        } else if (!underAttack && truck.underAttack) {
+          truck.element.style.animation = '';
+          truck.underAttack = false;
+        }
+        
+        // Add danger animation if not exists
+        if (underAttack && !document.querySelector('style[data-truck-danger]')) {
+          const style = document.createElement('style');
+          style.setAttribute('data-truck-danger', 'true');
+          style.textContent = `
+            @keyframes truckDanger {
+              0%, 100% { filter: brightness(1); }
+              50% { filter: brightness(1.5) hue-rotate(45deg); }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+      }
+      
+      static deliverAmmo(truck) {
+        if (truck.targetTower && !truck.targetTower.element.parentNode) {
+          // Tower was destroyed, return ammo to depot
+          truck.sourceDepot.ammoSupply += truck.ammoCarried;
+          this.updateDepotDisplay(truck.sourceDepot);
+          return;
+        }
+        
+        // Deliver ammo to tower
+        truck.targetTower.ammo = Math.min(
+          truck.targetTower.maxAmmo, 
+          truck.targetTower.ammo + truck.ammoCarried
+        );
+        
+        // Update tower ammo bar
+        if (truck.targetTower.ammoBar) {
+          truck.targetTower.ammoBar.style.width = `${(truck.targetTower.ammo / truck.targetTower.maxAmmo) * 100}%`;
+        }
+        
+        // Stop reloading if tower was reloading
+        if (truck.targetTower.reloading) {
+          truck.targetTower.reloading = false;
+          truck.targetTower.element.style.opacity = '1';
+        }
+        
+        // Visual effect
+        ParticleSystem.createExplosionParticles(truck.x, truck.y, 4);
+        LightingSystem.createMuzzleLight(truck.x, truck.y);
+        
+        truck.delivered = true;
+      }
+      
+      static destroySupplyTruck(truck) {
+        // Create explosion effect
+        ParticleSystem.createExplosionParticles(truck.x, truck.y, 6);
+        LightingSystem.createExplosionLight(truck.x, truck.y, 1.2);
+        
+        // Return ammo to depot
+        truck.sourceDepot.ammoSupply += Math.floor(truck.ammoCarried * 0.7); // 70% recovered
+        this.updateDepotDisplay(truck.sourceDepot);
+        
+        this.removeSupplyTruck(truck);
+      }
+      
+      static removeSupplyTruck(truck) {
+        if (truck.element && truck.element.parentNode) {
+          truck.element.remove();
+        }
+        
+        const index = gameState.supplyTrucks.indexOf(truck);
+        if (index !== -1) {
+          gameState.supplyTrucks.splice(index, 1);
+        }
+      }
+      
+      static updateDepotRestocking(currentTime) {
+        gameState.ammoDepots.forEach(depot => {
+          if (depot.ammoSupply < depot.maxAmmoSupply) {
+            // Restock depot slowly over time
+            if (currentTime - depot.lastRestock > 5000) { // Every 5 seconds
+              depot.ammoSupply = Math.min(depot.maxAmmoSupply, depot.ammoSupply + 10);
+              depot.lastRestock = currentTime;
+              this.updateDepotDisplay(depot);
+            }
+          }
+        });
+      }
+      
+      static updateDepotDisplay(depot) {
+        if (depot.ammoFill) {
+          const ammoRatio = depot.ammoSupply / depot.maxAmmoSupply;
+          depot.ammoFill.style.width = `${ammoRatio * 100}%`;
+          
+          // Change color based on ammo level
+          if (ammoRatio > 0.6) {
+            depot.ammoFill.style.backgroundColor = '#ffa500'; // Orange
+          } else if (ammoRatio > 0.3) {
+            depot.ammoFill.style.backgroundColor = '#ff8c00'; // Dark orange
+          } else {
+            depot.ammoFill.style.backgroundColor = '#ff4500'; // Red orange
+          }
+        }
+      }
+      
+      static checkTowerAmmoNeeds() {
+        // Visual indication for towers that desperately need ammo
+        gameState.towers.forEach(tower => {
+          if (tower.maxAmmo > 0) {
+            const ammoRatio = tower.ammo / tower.maxAmmo;
+            
+            if (ammoRatio < 0.2 && !tower.lowAmmoIndicator) {
+              // Add low ammo indicator
+              const indicator = document.createElement('div');
+              indicator.className = 'low-ammo-indicator';
+              indicator.style.position = 'absolute';
+              indicator.style.top = '-10px';
+              indicator.style.right = '-10px';
+              indicator.style.width = '12px';
+              indicator.style.height = '12px';
+              indicator.style.backgroundColor = '#ff4500';
+              indicator.style.borderRadius = '50%';
+              indicator.style.animation = 'lowAmmoPulse 1s infinite';
+              indicator.style.zIndex = '15';
+              
+              tower.element.appendChild(indicator);
+              tower.lowAmmoIndicator = indicator;
+              
+              // Add pulse animation if not exists
+              if (!document.querySelector('style[data-ammo-pulse]')) {
+                const style = document.createElement('style');
+                style.setAttribute('data-ammo-pulse', 'true');
+                style.textContent = `
+                  @keyframes lowAmmoPulse {
+                    0%, 100% { opacity: 0.3; transform: scale(1); }
+                    50% { opacity: 1; transform: scale(1.2); }
+                  }
+                `;
+                document.head.appendChild(style);
+              }
+            } else if (ammoRatio >= 0.4 && tower.lowAmmoIndicator) {
+              // Remove low ammo indicator
+              tower.lowAmmoIndicator.remove();
+              tower.lowAmmoIndicator = null;
+            }
+          }
+        });
+      }
+      
+      static requestSupplyDelivery(depot) {
+        // Manual supply truck request
+        if (depot.ammoSupply < 20) {
+          // Not enough ammo in depot
+          return;
+        }
+        
+        // Force spawn a supply truck from this depot
+        gameState.lastSupplySpawn = 0; // Reset timer to allow immediate spawn
+        this.spawnSupplyTruck();
+      }
+      
+      static highlightSupplyRoute(truck) {
+        // Visual indication of supply route
+        const route = document.createElement('div');
+        route.className = 'supply-route';
+        route.style.position = 'absolute';
+        route.style.left = `${Math.min(truck.x, truck.targetX)}px`;
+        route.style.top = `${Math.min(truck.y, truck.targetY)}px`;
+        route.style.width = `${Math.abs(truck.targetX - truck.x)}px`;
+        route.style.height = `${Math.abs(truck.targetY - truck.y)}px`;
+        route.style.border = '2px dashed #4CAF50';
+        route.style.borderRadius = '5px';
+        route.style.pointerEvents = 'none';
+        route.style.zIndex = '5';
+        route.style.opacity = '0.7';
+        
+        gameBoard.appendChild(route);
+        
+        // Remove route after 3 seconds
+        setTimeout(() => route.remove(), 3000);
+      }
+      
+      static cleanup() {
+        // Remove all supply trucks and depots
+        gameState.supplyTrucks.forEach(truck => {
+          if (truck.element && truck.element.parentNode) {
+            truck.element.remove();
+          }
+        });
+        
+        gameState.ammoDepots.forEach(depot => {
+          if (depot.element && depot.element.parentNode) {
+            depot.element.remove();
+          }
+        });
+        
+        gameState.supplyTrucks = [];
+        gameState.ammoDepots = [];
+        gameState.lastSupplySpawn = 0;
+      }
+    }
+
     // Map generation system
     class MapGenerator {
       constructor(width = 800, height = 500) {
@@ -1404,15 +3040,133 @@
       });
     }
 
-    // Tower definitions
+    // Tower definitions - Authentic WWII representations
     const towerTypes = {
-      mg: { name: "Machine Gun", cost: 25, damage: 1, range: 120, fireRate: 500, targets: ["infantry", "tank", "heavytank"], icon: "👨‍🦯", ammo: 20, maxAmmo: 20, reloadTime: 2000 },
-      artillery: { name: "Artillery", cost: 50, damage: 3, range: 180, fireRate: 2000, targets: ["infantry", "tank", "heavytank"], icon: "💣", splash: 60, ammo: 3, maxAmmo: 3, reloadTime: 5000 },
-      aa: { name: "Anti-Air", cost: 40, damage: 2, range: 150, fireRate: 800, targets: ["aircraft"], icon: "⚡", ammo: 15, maxAmmo: 15, reloadTime: 3000 },
-      sniper: { name: "Sniper", cost: 60, damage: 6, range: 250, fireRate: 3000, targets: ["infantry", "tank", "heavytank"], icon: "🔭", ammo: 5, maxAmmo: 5, reloadTime: 4000 },
-      engineer: { name: "Engineer", cost: 45, damage: 0, range: 100, fireRate: 5000, targets: [], icon: "🔧", ammo: 3, maxAmmo: 3, reloadTime: 8000, special: "construction" },
-      radar: { name: "Radar", cost: 35, damage: 0, range: 200, fireRate: 0, targets: [], icon: "📡", ammo: 0, maxAmmo: 0, reloadTime: 0, special: "detection" },
-      command: { name: "Command Post", cost: 80, damage: 0, range: 150, fireRate: 0, targets: [], icon: "🏛️", ammo: 0, maxAmmo: 0, reloadTime: 0, special: "support" }
+      mg: { 
+        name: "MG42 Machine Gun Nest", 
+        cost: 25, 
+        damage: 2, 
+        range: 140, 
+        fireRate: 150, // Very fast firing
+        targets: ["infantry", "tank", "heavytank"], 
+        ammo: 50, 
+        maxAmmo: 50, 
+        reloadTime: 1500,
+        description: "German MG42 'Hitler's Buzzsaw' - devastating rate of fire against infantry",
+        specialAbility: "suppression", // Slows down infantry in range
+        crewSize: 3,
+        armor: "light"
+      },
+      artillery: { 
+        name: "88mm Flak Gun", 
+        cost: 60, 
+        damage: 8, 
+        range: 220, 
+        fireRate: 3000, 
+        targets: ["infantry", "tank", "heavytank", "aircraft"], // Dual purpose
+        splash: 80, 
+        ammo: 6, 
+        maxAmmo: 6, 
+        reloadTime: 4000,
+        description: "German 88mm - feared dual-purpose anti-tank and anti-aircraft gun",
+        specialAbility: "armor_piercing", // Extra damage to armored targets
+        crewSize: 5,
+        armor: "medium"
+      },
+      aa: { 
+        name: "Bofors 40mm AA Gun", 
+        cost: 45, 
+        damage: 4, 
+        range: 180, 
+        fireRate: 600, 
+        targets: ["aircraft"], 
+        ammo: 20, 
+        maxAmmo: 20, 
+        reloadTime: 2500,
+        description: "Swedish Bofors 40mm - reliable anti-aircraft defense",
+        specialAbility: "tracking", // Improved accuracy against fast targets
+        crewSize: 4,
+        armor: "light"
+      },
+      sniper: { 
+        name: "Sniper Team", 
+        cost: 40, 
+        damage: 12, 
+        range: 300, 
+        fireRate: 4000, 
+        targets: ["infantry"], // Specialized anti-personnel
+        ammo: 8, 
+        maxAmmo: 8, 
+        reloadTime: 3000,
+        description: "Elite marksman team with scoped rifles",
+        specialAbility: "precision", // Can target specific enemy types preferentially
+        crewSize: 2,
+        armor: "none"
+      },
+      engineer: { 
+        name: "Combat Engineers", 
+        cost: 35, 
+        damage: 1, 
+        range: 80, 
+        fireRate: 2000, 
+        targets: ["infantry"], 
+        ammo: 8, 
+        maxAmmo: 8, 
+        reloadTime: 3000, 
+        special: "construction",
+        description: "Versatile engineers - build fortifications and clear obstacles",
+        specialAbility: "construction", // Can build additional defenses
+        crewSize: 4,
+        armor: "light"
+      },
+      mortar: {
+        name: "81mm Mortar Team",
+        cost: 50,
+        damage: 6,
+        range: 200,
+        fireRate: 2500,
+        targets: ["infantry", "tank"],
+        splash: 70,
+        ammo: 12,
+        maxAmmo: 12,
+        reloadTime: 4000,
+        description: "High-angle fire support for infantry suppression",
+        specialAbility: "indirect_fire", // Can fire over obstacles
+        crewSize: 3,
+        armor: "none"
+      },
+      radar: { 
+        name: "Radar Station", 
+        cost: 70, 
+        damage: 0, 
+        range: 250, 
+        fireRate: 0, 
+        targets: [], 
+        ammo: 0, 
+        maxAmmo: 0, 
+        reloadTime: 0, 
+        special: "detection",
+        description: "Early warning radar - extends detection range of all defensive positions",
+        specialAbility: "detection", // Reveals enemy positions and extends range
+        crewSize: 6,
+        armor: "light"
+      },
+      command: { 
+        name: "Command Bunker", 
+        cost: 100, 
+        damage: 0, 
+        range: 180, 
+        fireRate: 0, 
+        targets: [], 
+        ammo: 0, 
+        maxAmmo: 0, 
+        reloadTime: 0, 
+        special: "support",
+        description: "Fortified command post - coordinates defensive operations",
+        specialAbility: "command", // Buffs nearby units and coordinates fire
+        crewSize: 8,
+        armor: "heavy"
+      }
     };
 
     // Enemy definitions
@@ -1545,6 +3299,15 @@
       // Initialize weather system
       WeatherSystem.init();
       
+      // Initialize AI system after terrain is generated
+      EnemyAI.initializeCoverSystem();
+      
+      // Initialize destructible terrain system
+      DestructibleTerrain.initializeDestructibleElements();
+      
+      // Initialize supply line system
+      SupplyLineSystem.initializeSupplyDepots();
+      
       // Set up difficulty selection
       document.querySelectorAll('.difficulty-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -1603,6 +3366,14 @@
           WeatherSystem.updateWeather(timestamp);
         }
         
+        if (gameState.frameCounter % 10 === 0) { // Update AI every 10 frames
+          EnemyAI.updateEnemyAI(deltaTime);
+        }
+        
+        if (gameState.frameCounter % 30 === 0) { // Update supply system every 30 frames
+          SupplyLineSystem.updateSupplySystem(timestamp);
+        }
+        
         gameState.animationFrameId = requestAnimationFrame(gameLoop);
       }
     }
@@ -1625,26 +3396,39 @@
           return;
         }
         
-        // Calculate movement along path
-        const speedFactor = enemy.speed * (deltaTime / 16) * gameState.enemySpeedMultiplier;
-        enemy.pathProgress += speedFactor;
+        // Check if enemy is under AI control for special behaviors
+        const aiState = enemy.aiState;
+        const isAIControlled = aiState && (
+          aiState.behavior === 'seeking_cover' || 
+          aiState.behavior === 'in_cover' || 
+          aiState.behavior === 'flanking' || 
+          aiState.behavior === 'retreating'
+        );
         
-        while (enemy.pathProgress >= 1 && enemy.pathIndex < path.length - 1) {
-          enemy.pathProgress -= 1;
-          enemy.pathIndex++;
+        // If not under AI control, use normal path movement
+        if (!isAIControlled) {
+          // Calculate movement along path
+          const speedFactor = enemy.speed * (deltaTime / 16) * gameState.enemySpeedMultiplier;
+          enemy.pathProgress += speedFactor;
+          
+          while (enemy.pathProgress >= 1 && enemy.pathIndex < path.length - 1) {
+            enemy.pathProgress -= 1;
+            enemy.pathIndex++;
+          }
+          
+          // Interpolate position between current and next path point
+          const currentPoint = path[enemy.pathIndex];
+          const nextIndex = Math.min(enemy.pathIndex + 1, path.length - 1);
+          const nextPoint = path[nextIndex];
+          
+          enemy.x = currentPoint.x + (nextPoint.x - currentPoint.x) * enemy.pathProgress;
+          enemy.y = currentPoint.y + (nextPoint.y - currentPoint.y) * enemy.pathProgress;
+          
+          // Update visual position
+          enemy.element.style.left = `${enemy.x - enemy.element.offsetWidth/2}px`;
+          enemy.element.style.top = `${enemy.y - enemy.element.offsetHeight/2}px`;
         }
-        
-        // Interpolate position between current and next path point
-        const currentPoint = path[enemy.pathIndex];
-        const nextIndex = Math.min(enemy.pathIndex + 1, path.length - 1);
-        const nextPoint = path[nextIndex];
-        
-        enemy.x = currentPoint.x + (nextPoint.x - currentPoint.x) * enemy.pathProgress;
-        enemy.y = currentPoint.y + (nextPoint.y - currentPoint.y) * enemy.pathProgress;
-        
-        // Update visual position
-        enemy.element.style.left = `${enemy.x - enemy.element.offsetWidth/2}px`;
-        enemy.element.style.top = `${enemy.y - enemy.element.offsetHeight/2}px`;
+        // AI-controlled movement is handled in the EnemyAI system
       });
       
       // Remove enemies
@@ -1998,7 +3782,7 @@
     }
 
     function placeTower(x, y) {
-      if (isOnPath(x, y) || isTowerConflict(x, y)) return;
+      if (isOnPath(x, y) || isTowerConflict(x, y) || DestructibleTerrain.isPositionBlocked(x, y, 25)) return;
       
       const towerType = towerTypes[gameState.selectedTowerType];
       if (gameState.resources < towerType.cost) return;
@@ -2049,10 +3833,10 @@
       const tower = document.createElement('div');
       tower.className = `tower ${type}`;
       
-      // Create turret for rotation
+      // Create turret for rotation (visual styles now handled by CSS)
       const turret = document.createElement('div');
       turret.className = 'tower-turret';
-      turret.textContent = towerTypes[type].icon;
+      // No icon needed - using CSS-based visual designs
       tower.appendChild(turret);
       
       // Create barrel for combat towers (not support towers)
@@ -2600,13 +4384,16 @@
       explosion.style.top = `${y}px`;
       gameBoard.appendChild(explosion);
       
+      const splashRadius = 60;
+      
+      // Damage enemies
       gameState.enemies.forEach(enemy => {
         const dx = enemy.x - x;
         const dy = enemy.y - y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         
-        if (distance <= 60) {
-          const damageMultiplier = 1 - (distance / 60);
+        if (distance <= splashRadius) {
+          const damageMultiplier = 1 - (distance / splashRadius);
           const splashDamage = Math.round(damage * damageMultiplier);
           if (splashDamage > 0) {
             damageEnemy(enemy, splashDamage);
@@ -2614,11 +4401,19 @@
         }
       });
       
+      // Check for destructible terrain impact (artillery only)
+      if (damage >= 3) {
+        DestructibleTerrain.checkArtilleryImpact(x, y, damage, splashRadius);
+      }
+      
       setTimeout(() => explosion.remove(), 500);
     }
 
     function damageEnemy(enemy, damage) {
       enemy.health -= damage;
+      
+      // Track recent damage for AI system
+      enemy.recentDamage = Date.now();
       
       const healthFill = enemy.element.querySelector('.health-fill');
       healthFill.style.width = `${(enemy.health / enemy.maxHealth) * 100}%`;
@@ -2693,6 +4488,9 @@
       ParticleSystem.clearAllParticles();
       LightingSystem.clearAllLights();
       WeatherSystem.clearWeatherEffects();
+      EnemyAI.cleanupAI();
+      DestructibleTerrain.cleanup();
+      SupplyLineSystem.cleanup();
       gameState.terrainElements = [];
       
       // Reset game state
@@ -2703,6 +4501,9 @@
         score: 0, lastFrameTime: 0, frameCounter: 0, enemySpeedMultiplier: 0.4,
         walls: [], mines: [], radarCoverage: false, nextWavePreview: null, supplyConvoys: [],
         lastConvoyTime: 0, weather: { type: 'clear', intensity: 0, lastChange: 0 },
+        coverSpots: [], enemyGroups: [], lastAIUpdate: 0,
+        destructibleTerrain: [], craters: [], modifiedPaths: [],
+        supplyTrucks: [], ammoDepots: [], lastSupplySpawn: 0,
         performanceMetrics: { enemiesKilled: 0, wavesCompleted: 0, accuracy: 100, efficiency: 100 }
       });
       
@@ -2721,6 +4522,15 @@
       createPathVisualization();
       addTerrainElements();
       updateInfoPanel();
+      
+      // Reinitialize AI system
+      EnemyAI.initializeCoverSystem();
+      
+      // Reinitialize destructible terrain
+      DestructibleTerrain.initializeDestructibleElements();
+      
+      // Reinitialize supply system
+      SupplyLineSystem.initializeSupplyDepots();
     }
 
     // Generate a new map without resetting the game
@@ -2741,6 +4551,17 @@
       generateMapData();
       createPathVisualization();
       addTerrainElements();
+      
+      // Reinitialize AI for new terrain
+      EnemyAI.initializeCoverSystem();
+      
+      // Reinitialize destructible terrain for new map
+      DestructibleTerrain.cleanup();
+      DestructibleTerrain.initializeDestructibleElements();
+      
+      // Reinitialize supply system for new map
+      SupplyLineSystem.cleanup();
+      SupplyLineSystem.initializeSupplyDepots();
     }
 
     // Utility functions
