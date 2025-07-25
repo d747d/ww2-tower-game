@@ -4181,14 +4181,139 @@
       }
     }
 
-    // Global map generator instance
+    // Global map generator instance (kept for terrain generation)
     const mapGenerator = new MapGenerator();
-    let pathSegments = [];
     let terrainFeatures = [];
 
-    // Generate path points for enemy movement
-    let path = [];
-    const pathResolution = 20; // Higher resolution for smoother movement
+    // Dynamic Pathfinding System - enemies find weakest defensive points
+    class DynamicPathfinding {
+      static GRID_SIZE = 20; // 20x20 pixel grid cells
+      static THREAT_DECAY = 0.8; // How quickly threat decreases with distance
+      
+      static createThreatMap() {
+        const mapWidth = 800;
+        const mapHeight = 500;
+        const gridWidth = Math.ceil(mapWidth / this.GRID_SIZE);
+        const gridHeight = Math.ceil(mapHeight / this.GRID_SIZE);
+        
+        // Initialize threat grid with zeros
+        const threatMap = Array(gridHeight).fill(null).map(() => Array(gridWidth).fill(0));
+        
+        // Add threat from each tower
+        gameState.towers.forEach(tower => {
+          this.addTowerThreat(threatMap, tower, gridWidth, gridHeight);
+        });
+        
+        return threatMap;
+      }
+      
+      static addTowerThreat(threatMap, tower, gridWidth, gridHeight) {
+        const towerGridX = Math.floor(tower.x / this.GRID_SIZE);
+        const towerGridY = Math.floor(tower.y / this.GRID_SIZE);
+        const threatRadius = Math.ceil(tower.range / this.GRID_SIZE);
+        
+        // Calculate base threat based on tower damage and fire rate
+        const baseThreat = tower.damage * (1000 / tower.fireRate);
+        
+        // Apply threat in circular pattern around tower
+        for (let dy = -threatRadius; dy <= threatRadius; dy++) {
+          for (let dx = -threatRadius; dx <= threatRadius; dx++) {
+            const gridX = towerGridX + dx;
+            const gridY = towerGridY + dy;
+            
+            if (gridX >= 0 && gridX < gridWidth && gridY >= 0 && gridY < gridHeight) {
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              if (distance <= threatRadius) {
+                const threatLevel = baseThreat * Math.pow(this.THREAT_DECAY, distance);
+                threatMap[gridY][gridX] += threatLevel;
+              }
+            }
+          }
+        }
+      }
+      
+      static findBestPath(startX, startY, endX, endY) {
+        const threatMap = this.createThreatMap();
+        
+        // Simple A* pathfinding with threat-based cost
+        const startGridX = Math.floor(startX / this.GRID_SIZE);
+        const startGridY = Math.floor(startY / this.GRID_SIZE);
+        const endGridX = Math.floor(endX / this.GRID_SIZE);
+        const endGridY = Math.floor(endY / this.GRID_SIZE);
+        
+        const path = this.aStar(threatMap, startGridX, startGridY, endGridX, endGridY);
+        
+        // Convert grid path back to pixel coordinates
+        return path.map(point => ({
+          x: point.x * this.GRID_SIZE + this.GRID_SIZE / 2,
+          y: point.y * this.GRID_SIZE + this.GRID_SIZE / 2
+        }));
+      }
+      
+      static aStar(threatMap, startX, startY, endX, endY) {
+        const gridHeight = threatMap.length;
+        const gridWidth = threatMap[0].length;
+        
+        const openSet = [{ x: startX, y: startY, g: 0, h: 0, f: 0, parent: null }];
+        const closedSet = new Set();
+        
+        const heuristic = (x1, y1, x2, y2) => Math.abs(x2 - x1) + Math.abs(y2 - y1);
+        
+        while (openSet.length > 0) {
+          // Find node with lowest f score
+          openSet.sort((a, b) => a.f - b.f);
+          const current = openSet.shift();
+          
+          if (current.x === endX && current.y === endY) {
+            // Reconstruct path
+            const path = [];
+            let node = current;
+            while (node) {
+              path.unshift({ x: node.x, y: node.y });
+              node = node.parent;
+            }
+            return path;
+          }
+          
+          closedSet.add(`${current.x},${current.y}`);
+          
+          // Check all 8 directions
+          const neighbors = [
+            { dx: -1, dy: -1 }, { dx: 0, dy: -1 }, { dx: 1, dy: -1 },
+            { dx: -1, dy: 0 },                     { dx: 1, dy: 0 },
+            { dx: -1, dy: 1 },  { dx: 0, dy: 1 },  { dx: 1, dy: 1 }
+          ];
+          
+          neighbors.forEach(({ dx, dy }) => {
+            const newX = current.x + dx;
+            const newY = current.y + dy;
+            
+            if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight) return;
+            if (closedSet.has(`${newX},${newY}`)) return;
+            
+            // Movement cost includes threat level
+            const moveCost = 1 + threatMap[newY][newX] * 0.1; // Base cost + threat multiplier
+            const g = current.g + moveCost;
+            const h = heuristic(newX, newY, endX, endY);
+            const f = g + h;
+            
+            const existing = openSet.find(node => node.x === newX && node.y === newY);
+            if (!existing || g < existing.g) {
+              if (existing) {
+                existing.g = g;
+                existing.f = f;
+                existing.parent = current;
+              } else {
+                openSet.push({ x: newX, y: newY, g, h, f, parent: current });
+              }
+            }
+          });
+        }
+        
+        // No path found, return direct line
+        return [{ x: startX, y: startY }, { x: endX, y: endY }];
+      }
+    }
 
     // Helper function to calculate Bezier curve length for adaptive resolution
     function calculateBezierLength(points) {
@@ -4218,12 +4343,9 @@
 
     function generateMapData(seed) {
       mapGenerator.seed = seed || Math.random();
-      pathSegments = mapGenerator.generatePath();
-      terrainFeatures = mapGenerator.generateTerrain(mapGenerator.seed, pathSegments);
+      terrainFeatures = mapGenerator.generateTerrain(mapGenerator.seed, []);
       
-      // Generate high-resolution path points for precise enemy movement
-      path = [];
-      pathSegments.forEach((segment, segmentIndex) => {
+      // No more fixed paths - enemies will use dynamic pathfinding!
         if (segment.type === 'curved') {
           const points = segment.points;
           
@@ -5496,9 +5618,9 @@
         setTimeout(() => {
           if (!gameState.gameOver && !gameState.victory) {
             if (enemyType.includes('elite_')) {
-              createEnemy(enemyType.split('_')[1], true);
+              createEnemy(enemyType.split('_')[1], true, index);
             } else {
-              createEnemy(enemyType, false);
+              createEnemy(enemyType, false, index);
             }
           }
         }, index * spawnDelay);
@@ -5685,7 +5807,7 @@
     }
 
     // Core game functions (unchanged but streamlined)
-    function createEnemy(type, isElite) {
+    function createEnemy(type, isElite, spawnIndex = 0) {
       const enemy = document.createElement('div');
       enemy.className = `enemy ${type}${isElite ? ' elite' : ''} moving`;
       // No icon needed - using CSS-based realistic designs
@@ -5714,7 +5836,7 @@
       }
       
       // Start enemies with slight spacing to prevent stacking
-      const enemySpacing = gameState.enemies.length * 20; // 20px spacing between enemies
+      const enemySpacing = spawnIndex * 25; // 25px spacing between enemies
       let startPathIndex = 0;
       let startPathProgress = 0;
       
